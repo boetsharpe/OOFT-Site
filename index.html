@@ -18,12 +18,29 @@
             font-style: normal;
         }
 
+        @font-face {
+            font-family: 'HydrogenType';
+            src: url('HydrogenType.woff2') format('woff2'),
+            url('HydrogenType.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap; 
+        }
+        @font-face {
+        font-family: 'bb-modern-semi-condensed';
+        src: url('bb-modern-semi-condensed.woff2') format('woff2'),
+            url('bb-modern-semi-condensed.woff') format('woff'),
+            url('bb-modern-semi-condensed.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+  
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            font-family: 'MONOType03', monospace;
+            font-family: 'bb-modern-semi-condensed', monospace;
             background-color: #E6E6E6;
             overflow: hidden;
         }
@@ -62,9 +79,9 @@
         }
 
         .section-one .content {
-            font-family: 'Quadrant', sans-serif;
-            font-size: clamp(1rem, 2vw, 2.5rem);
-            line-height: 1.3;
+            font-family: 'bb-modern-semi-condensed', sans-serif;
+            font-size: clamp(1.5rem, 2.5vw, 3rem);
+            line-height: 1;
             color: #000;
             text-align: left;
         }
@@ -124,7 +141,7 @@
 
         /* Responsive Content Paragraphs */
         .content p {
-            max-width: 70vw;
+            max-width: 100vw;
             margin: 0 auto;
             z-index: 100;
         }
@@ -142,7 +159,7 @@
             font-size: 1rem;
             font-weight: bold;
             color: white;
-            font-family: 'Quadrant', sans-serif;
+            font-family: 'bb-modern-semi-condensed', sans-serif;
             text-transform: uppercase;
             mix-blend-mode: difference;
             transform: translate(-50%, -50%);
@@ -217,7 +234,7 @@
             <div class="swiper-slide section-one">
                 <div class="content">
                     <p class="has-line-data" data-line-start="0" data-line-end="1">
-                    Not really a 'studio'. No 'business plan'—just me in the spare bedroom, with a way of working that channels my ADHD-fueled restlessness and an unconventional, ever-evolving mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. Personal and commercial work feed into each other. World building. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Lots of experimentation and an obsession with unique answers.
+                    Not really a 'studio'. No 'business plan'. Just me in the spare bedroom, with a way of working that channels my ADHD-fueled restlessness and an unlikely mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. Personal and commercial work feed into each other. World building. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Lots of experimentation and an obsession to find unique answers.
                     </p>
                     <br>
                     INSTA: <a href="https://www.instagram.com/lesliesharpe_/" target="_blank">@ooft_labs</a><br>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOFT</title>
+
+    <!-- Swiper.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    <!-- Custom Styles -->
+    <style>
+        /* Fonts and Base Styles */
+        @font-face {
+            font-family: 'Quadrant';
+            src: url('Quadrant.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'MONOType03', monospace;
+            background-color: #E6E6E6;
+            overflow: hidden;
+        }
+
+        /* Links */
+        .content a {
+            color: #000;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .content a:hover {
+            opacity: 0.5;
+        }
+
+        /* Swiper Styles */
+        .swiper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .swiper-slide {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            box-sizing: border-box;
+        }
+
+        /* Section One */
+        .section-one {
+            background-color: #E6E6E6;
+            padding: 2rem;
+            z-index: 100;
+        }
+
+        .section-one .content {
+            font-family: 'Quadrant', sans-serif;
+            font-size: clamp(1rem, 2vw, 2.5rem);
+            line-height: 1.3;
+            color: #000;
+            text-align: left;
+        }
+
+        .section-one .content p {
+            margin: 0 0 1.25rem;
+        }
+
+        .section-one .content .email {
+            margin-top: 2.5rem;
+        }
+
+        /* Video Section */
+        .video-section {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-section video {
+            position: absolute;
+            width: 100vw;
+            height: auto;
+            max-height: none;
+            bottom: 0;
+            left: 0;
+            object-fit: cover;
+            z-index: 100;
+        }
+
+        /* Navigation Overlay */
+        .nav-overlay {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 200;
+        }
+
+        .nav-overlay .link-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+        }
+
+        .nav-overlay img {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        /* Responsive Content Paragraphs */
+        .content p {
+            max-width: 70vw;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        @media (max-width: 62rem) {
+            .content p {
+                max-width: 100%;
+            }
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            font-family: 'Quadrant', sans-serif;
+            text-transform: uppercase;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .video-section:hover .custom-cursor {
+            display: block;
+        }
+
+        /* Optional Video Mask */
+        .video-mask {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+            mask-size: 100% 100%;
+            -webkit-mask-size: 100% 100%;
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .video-mask video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .video-section video {
+                aspect-ratio: 9/16;
+                object-fit: cover;
+                object-position: top left; /* Ensures the top, left, and bottom are always visible */
+            }
+
+            .nav-overlay {
+                top: 1rem;
+                right: 1rem;
+                gap: 0.5rem;
+            }
+
+            .nav-overlay .link-block {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+
+            .nav-overlay img {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .video-section video {
+                object-position: bottom left; /* Ensures the left, right, and bottom are always visible */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Swiper Container -->
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <!-- Section One -->
+            <div class="swiper-slide section-one">
+                <div class="content">
+                    <p class="has-line-data" data-line-start="0" data-line-end="1">
+                        Not really a “studio” and there's no business plan—just me in a spare bedroom with a way of working that channels my ADHD-fueled restlessness and unconventional mix of skills into something pure. A wrapper for making things for myself. A creative plugin for agencies and clients. Personal and commercial work feed into each other. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Lots of experimentation and an obsession for unique answers.
+                    </p>
+                    <br>
+                    INSTA: <a href="https://www.instagram.com/lesliesharpe_/" target="_blank">@ooft_labs</a><br>
+                    EMAIL: <a href="mailto:boets@me.com">hi@ooft.labs</a><br>
+                    HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+                </div>
+            </div>
+
+            <!-- Section Two: Video Section -->
+            <div class="swiper-slide video-section">
+                <video id="videoPlayer" muted playsinline loading="lazy" poster="">
+                </video>
+                <div class="nav-overlay">
+                    <!-- Info Icon -->
+                    <div class="link-block" id="infoLink">
+                        <img src="svg/info.svg" alt="Info">
+                    </div>
+                    <!-- Mute Icon -->
+                    <div class="link-block" id="muteToggle">
+                        <img id="muteIcon" src="svg/unmute.svg" alt="Mute">
+                    </div>
+                    <!-- Reload Icon -->
+                    <div class="link-block" id="reloadIcon">
+                        <img src="svg/reload.svg" alt="Reload">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swiper.js Script -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const infoLink = document.getElementById('infoLink');
+        const muteToggle = document.getElementById('muteToggle');
+        const muteIcon = document.getElementById('muteIcon');
+        const reloadIcon = document.getElementById('reloadIcon');
+
+        let currentIndex = null;
+        let mobileCurrentIndex = null;
+
+        // Arrays of new 1440x1440 video links and corresponding poster images
+        const videoLinks = [
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Burnout.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Candle.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Clay.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Condensation.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Hair%20comp.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Mirror%20comp.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Squeeze.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Tech%20comp.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Wood1.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_milk%20comp.mp4"
+        ];
+
+        const imageLinks = [
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Burnout.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Candle.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Clay.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440+optimised/Condensation.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Hair%20comp.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Mirror%20comp.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Squeeze.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Tech%20comp.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Wood1.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/milk%20comp.jpg"
+        ];
+
+        // Arrays for Mobile-Specific Videos and Placeholders
+        const mobileVideoLinks = [
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood.mp4",
+        ];
+
+        const mobileImageLinks = [
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood_first_frame.jpg",
+        ];
+
+        // Function to check if the current device is mobile based on screen size
+        function isMobile() {
+            return window.matchMedia("(max-width: 768px)").matches;
+        }
+
+        // Check if the video source needs updating based on current viewport
+        function checkVideoSource() {
+            if (swiper.activeIndex === 1) { // Only if we're on the video slide
+                if ((isMobile() && videoLinks.includes(videoPlayer.src)) || 
+                    (!isMobile() && mobileVideoLinks.includes(videoPlayer.src))) {
+                    loadVideo();
+                }
+            }
+        }
+
+        // Ensure video only plays when on the correct slide
+        function loadVideo() {
+            if (swiper.activeIndex === 1) { // Only play if we're on the video slide
+                if (isMobile()) {
+                    loadMobileVideo();
+                } else {
+                    loadDesktopVideo();
+                }
+                // Ensure the video plays after setting the source
+                setTimeout(() => {
+                    if (!videoPlayer.paused) {
+                        videoPlayer.pause();
+                    }
+                    videoPlayer.play().catch(error => {
+                        console.error("Autoplay was prevented:", error);
+                        // If autoplay fails, provide a user interaction to start play
+                        document.body.addEventListener('click', startVideoOnClick, { once: true });
+                    });
+                }, 500); // Small delay to ensure the video has loaded
+            }
+        }
+
+        function startVideoOnClick() {
+            if (swiper.activeIndex === 1) { // Only play if we're on the video slide
+                videoPlayer.play();
+            }
+        }
+
+        // Desktop video loading logic
+        function loadDesktopVideo() {
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * videoLinks.length);
+            } while (nextIndex === currentIndex);
+
+            currentIndex = nextIndex;
+            videoPlayer.src = videoLinks[currentIndex];
+            videoPlayer.poster = imageLinks[currentIndex];
+        }
+
+        // Mobile video loading logic
+        function loadMobileVideo() {
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * mobileVideoLinks.length);
+            } while (nextIndex === mobileCurrentIndex);
+
+            mobileCurrentIndex = nextIndex;
+            videoPlayer.src = mobileVideoLinks[mobileCurrentIndex];
+            videoPlayer.poster = mobileImageLinks[mobileCurrentIndex];
+        }
+
+        // Event listener for video ending (works for both mobile and desktop)
+        videoPlayer.addEventListener('ended', () => {
+            if (swiper.activeIndex === 1) { // Only load new video if we're on the video slide
+                loadVideo();
+            }
+        });
+
+        // Scroll to the first slide when the Info button is clicked
+        infoLink.addEventListener('click', () => {
+            swiper.slideTo(0); // Swiper.js function to navigate to the first slide (index 0)
+        });
+
+        // Toggle sound on/off
+        muteToggle.addEventListener('click', () => {
+            videoPlayer.muted = !videoPlayer.muted;
+            muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg"; // Update the icon
+        });
+
+        // Reload video on Reload icon click
+        reloadIcon.addEventListener('click', () => {
+            if (swiper.activeIndex === 1) { // Only reload if on the video slide
+                loadVideo();
+            }
+        });
+
+        // Initialize Swiper.js
+        const swiper = new Swiper('.swiper', {
+            direction: 'vertical', // Enable vertical sliding
+            mousewheel: true, // Allow mouse wheel navigation
+            slidesPerView: 1, // Show one section at a time
+            speed: 300, // Snappier transition duration
+            initialSlide: 1, // Start with the second section in view
+        });
+
+        // Pause/Resume video based on active slide
+        swiper.on('slideChange', () => {
+            if (swiper.activeIndex === 1) {
+                checkVideoSource(); // Check if we need to switch video sources
+                videoPlayer.play(); // Play the video when in view
+            } else {
+                videoPlayer.pause(); // Pause the video when not in view
+            }
+        });
+
+        // Update the resize event to check for changes even when not on the video slide
+        window.addEventListener('resize', () => {
+            checkVideoSource();
+        });
+
+        // Initially load video based on device type
+        loadVideo();
+    </script>
+</body>
+</html>

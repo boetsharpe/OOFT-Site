@@ -27,13 +27,13 @@
             font-display: swap; 
         }
         @font-face {
-        font-family: 'bb-modern-semi-condensed';
-        src: url('bb-modern-semi-condensed.woff2') format('woff2'),
-            url('bb-modern-semi-condensed.woff') format('woff'),
-            url('bb-modern-semi-condensed.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
+            font-family: 'bb-modern-semi-condensed';
+            src: url('bb-modern-semi-condensed.woff2') format('woff2'),
+                url('bb-modern-semi-condensed.woff') format('woff'),
+                url('bb-modern-semi-condensed.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
   
         body, html {
             margin: 0;
@@ -76,6 +76,7 @@
             background-color: #E6E6E6;
             padding: 2rem;
             z-index: 100;
+            position: relative;
         }
 
         .section-one .content {
@@ -195,37 +196,61 @@
             object-fit: cover;
         }
 
+        /* Styles for the down arrow */
+        .down-icon {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .down-icon img {
+            width: 100%;
+            height: 100%;
+        }
+
         @media (max-width: 768px) {
             .video-section video {
                 aspect-ratio: 9/16;
                 object-fit: cover;
-                object-position: top left; /* Ensures the top, left, and bottom are always visible */
+                object-position: top left;
             }
 
-            .nav-overlay {
+            .nav-overlay, .down-icon {
+                bottom: auto;  /* Reset bottom to auto to ensure top positioning */
                 top: 1rem;
                 right: 1rem;
                 gap: 0.5rem;
             }
 
-            .nav-overlay .link-block {
+            .nav-overlay .link-block, .down-icon {
                 width: 1.5rem;
                 height: 1.5rem;
             }
 
-            .nav-overlay img {
+            .nav-overlay img, .down-icon img {
                 width: 1.5rem;
                 height: 1.5rem;
+            }
+
+            /* Specific rule for down-icon to keep it at the bottom right */
+            .down-icon {
+                bottom: 1rem;
+                top: auto;  /* Reset top to auto to ensure bottom positioning */
             }
         }
 
         @media (min-width: 769px) {
             .video-section video {
-                object-position: bottom left; /* Ensures the left, right, and bottom are always visible */
+                object-position: bottom left;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Swiper Container -->
     <div class="swiper">
@@ -233,13 +258,16 @@
             <!-- Section One -->
             <div class="swiper-slide section-one">
                 <div class="content">
-                    <p class="has-line-data" data-line-start="0" data-line-end="1">
-                    Not really a 'studio'. No 'business plan'. Just me in the spare bedroom, with a methadology that channels my ADHD-fueled restlessness and an unlikely mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. Personal and commercial work feed into each other. World building. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Lots of experimentation and an obsession to find unique answers.
+                    <p>Not really a studio. No business plan. Just me in the spare bedroom, with a methodology that channels my ADHD-fuelled restlessness, and an unlikely mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. The personal and the commercial—they feed one another. Worlds built from thin air. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Experimentation—endless experimentation—and the obsession to find unique answers.
                     </p>
-                    <br>
-                    INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft_labs</a><br>
-                    EMAIL: <a href="mailto:boets@me.com">hi@ooft.labs</a><br>
-                    HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+            
+                <br>
+                INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
+                EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
+                HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+                </div>
+                <div class="down-icon">
+                    <img src="svg/down.svg" alt="Navigate Down" id="downArrow">
                 </div>
             </div>
 
@@ -264,156 +292,162 @@
             </div>
         </div>
     </div>
-
-    <!-- Swiper.js Script -->
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script>
-        const videoPlayer = document.getElementById('videoPlayer');
-        const infoLink = document.getElementById('infoLink');
-        const muteToggle = document.getElementById('muteToggle');
-        const muteIcon = document.getElementById('muteIcon');
-        const reloadIcon = document.getElementById('reloadIcon');
-
-        let currentIndex = null;
-        let mobileCurrentIndex = null;
-
-        // Arrays of new 1440x1440 video links and corresponding poster images
-        const videoLinks = [
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Burnout.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Candle.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Clay.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Condensation.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Hair%20comp.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Mirror%20comp.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Squeeze.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Tech%20comp.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Wood1.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_milk%20comp.mp4"
-        ];
-
-        const imageLinks = [
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Burnout.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Candle.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Clay.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440+optimised/Condensation.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Hair%20comp.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Mirror%20comp.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Squeeze.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Tech%20comp.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Wood1.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/milk%20comp.jpg"
-        ];
-
-        // Arrays for Mobile-Specific Videos and Placeholders
-        const mobileVideoLinks = [
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech.mp4",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood.mp4",
-        ];
-
-        const mobileImageLinks = [
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay_first_frame.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk_first_frame.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze_first_frame.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech_first_frame.jpg",
-            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood_first_frame.jpg",
-        ];
-
-        // Function to check if the current device is mobile based on screen size
-        function isMobile() {
-            return window.matchMedia("(max-width: 768px)").matches;
-        }
-
-        // Check if the video source needs updating based on current viewport
-        function checkVideoSource() {
-            if (swiper.activeIndex === 1) { // Only if we're on the video slide
-                if ((isMobile() && videoLinks.includes(videoPlayer.src)) || 
-                    (!isMobile() && mobileVideoLinks.includes(videoPlayer.src))) {
+    
+        <!-- Swiper.js Script -->
+        <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+        <script>
+            const videoPlayer = document.getElementById('videoPlayer');
+            const infoLink = document.getElementById('infoLink');
+            const muteToggle = document.getElementById('muteToggle');
+            const muteIcon = document.getElementById('muteIcon');
+            const reloadIcon = document.getElementById('reloadIcon');
+            const downArrow = document.getElementById('downArrow');
+    
+            let currentIndex = null;
+            let mobileCurrentIndex = null;
+    
+            // Arrays of new 1440x1440 video links and corresponding poster images
+            const videoLinks = [
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Burnout.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Candle.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Clay.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Condensation.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Hair%20comp.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Mirror%20comp.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Squeeze.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Tech%20comp.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Wood1.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_milk%20comp.mp4"
+            ];
+    
+            const imageLinks = [
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Burnout.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Candle.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Clay.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440+optimised/Condensation.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Hair%20comp.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Mirror%20comp.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Squeeze.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Tech%20comp.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Wood1.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/milk%20comp.jpg"
+            ];
+    
+            // Arrays for Mobile-Specific Videos and Placeholders
+            const mobileVideoLinks = [
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech.mp4",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood.mp4",
+            ];
+    
+            const mobileImageLinks = [
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay_first_frame.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk_first_frame.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze_first_frame.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech_first_frame.jpg",
+                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood_first_frame.jpg",
+            ];
+    
+            // Function to check if the current device is mobile based on screen size
+            function isMobile() {
+                return window.matchMedia("(max-width: 768px)").matches;
+            }
+    
+            // Check if the video source needs updating based on current viewport
+            function checkVideoSource() {
+                if (swiper.activeIndex === 1) { // Only if we're on the video slide
+                    if ((isMobile() && videoLinks.includes(videoPlayer.src)) || 
+                        (!isMobile() && mobileVideoLinks.includes(videoPlayer.src))) {
+                        loadVideo();
+                    }
+                }
+            }
+    
+            // Ensure video only plays when on the correct slide
+            function loadVideo() {
+                if (swiper.activeIndex === 1) { // Only play if we're on the video slide
+                    if (isMobile()) {
+                        loadMobileVideo();
+                    } else {
+                        loadDesktopVideo();
+                    }
+                    // Ensure the video plays after setting the source
+                    setTimeout(() => {
+                        if (!videoPlayer.paused) {
+                            videoPlayer.pause();
+                        }
+                        videoPlayer.play().catch(error => {
+                            console.error("Autoplay was prevented:", error);
+                            // If autoplay fails, provide a user interaction to start play
+                            document.body.addEventListener('click', startVideoOnClick, { once: true });
+                        });
+                    }, 500); // Small delay to ensure the video has loaded
+                }
+            }
+    
+            function startVideoOnClick() {
+                if (swiper.activeIndex === 1) { // Only play if we're on the video slide
+                    videoPlayer.play();
+                }
+            }
+    
+            // Desktop video loading logic
+            function loadDesktopVideo() {
+                let nextIndex;
+                do {
+                    nextIndex = Math.floor(Math.random() * videoLinks.length);
+                } while (nextIndex === currentIndex);
+    
+                currentIndex = nextIndex;
+                videoPlayer.src = videoLinks[currentIndex];
+                videoPlayer.poster = imageLinks[currentIndex];
+            }
+    
+            // Mobile video loading logic
+            function loadMobileVideo() {
+                let nextIndex;
+                do {
+                    nextIndex = Math.floor(Math.random() * mobileVideoLinks.length);
+                } while (nextIndex === mobileCurrentIndex);
+    
+                mobileCurrentIndex = nextIndex;
+                videoPlayer.src = mobileVideoLinks[mobileCurrentIndex];
+                videoPlayer.poster = mobileImageLinks[mobileCurrentIndex];
+            }
+    
+            // Event listener for video ending (works for both mobile and desktop)
+            videoPlayer.addEventListener('ended', () => {
+                if (swiper.activeIndex === 1) { // Only load new video if we're on the video slide
                     loadVideo();
                 }
-            }
-        }
-
-        // Ensure video only plays when on the correct slide
-        function loadVideo() {
-            if (swiper.activeIndex === 1) { // Only play if we're on the video slide
-                if (isMobile()) {
-                    loadMobileVideo();
-                } else {
-                    loadDesktopVideo();
+            });
+    
+            // Scroll to the first slide when the Info button is clicked
+            infoLink.addEventListener('click', () => {
+                swiper.slideTo(0); // Swiper.js function to navigate to the first slide (index 0)
+            });
+    
+            // Toggle sound on/off
+            muteToggle.addEventListener('click', () => {
+                videoPlayer.muted = !videoPlayer.muted;
+                muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg"; // Update the icon
+            });
+    
+            // Reload video on Reload icon click
+            reloadIcon.addEventListener('click', () => {
+                if (swiper.activeIndex === 1) { // Only reload if on the video slide
+                    loadVideo();
                 }
-                // Ensure the video plays after setting the source
-                setTimeout(() => {
-                    if (!videoPlayer.paused) {
-                        videoPlayer.pause();
-                    }
-                    videoPlayer.play().catch(error => {
-                        console.error("Autoplay was prevented:", error);
-                        // If autoplay fails, provide a user interaction to start play
-                        document.body.addEventListener('click', startVideoOnClick, { once: true });
-                    });
-                }, 500); // Small delay to ensure the video has loaded
-            }
-        }
+            });
+    
+            // Navigate down to video section
+            downArrow.addEventListener('click', () => {
+                swiper.slideTo(1);
+            });
 
-        function startVideoOnClick() {
-            if (swiper.activeIndex === 1) { // Only play if we're on the video slide
-                videoPlayer.play();
-            }
-        }
-
-        // Desktop video loading logic
-        function loadDesktopVideo() {
-            let nextIndex;
-            do {
-                nextIndex = Math.floor(Math.random() * videoLinks.length);
-            } while (nextIndex === currentIndex);
-
-            currentIndex = nextIndex;
-            videoPlayer.src = videoLinks[currentIndex];
-            videoPlayer.poster = imageLinks[currentIndex];
-        }
-
-        // Mobile video loading logic
-        function loadMobileVideo() {
-            let nextIndex;
-            do {
-                nextIndex = Math.floor(Math.random() * mobileVideoLinks.length);
-            } while (nextIndex === mobileCurrentIndex);
-
-            mobileCurrentIndex = nextIndex;
-            videoPlayer.src = mobileVideoLinks[mobileCurrentIndex];
-            videoPlayer.poster = mobileImageLinks[mobileCurrentIndex];
-        }
-
-        // Event listener for video ending (works for both mobile and desktop)
-        videoPlayer.addEventListener('ended', () => {
-            if (swiper.activeIndex === 1) { // Only load new video if we're on the video slide
-                loadVideo();
-            }
-        });
-
-        // Scroll to the first slide when the Info button is clicked
-        infoLink.addEventListener('click', () => {
-            swiper.slideTo(0); // Swiper.js function to navigate to the first slide (index 0)
-        });
-
-        // Toggle sound on/off
-        muteToggle.addEventListener('click', () => {
-            videoPlayer.muted = !videoPlayer.muted;
-            muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg"; // Update the icon
-        });
-
-        // Reload video on Reload icon click
-        reloadIcon.addEventListener('click', () => {
-            if (swiper.activeIndex === 1) { // Only reload if on the video slide
-                loadVideo();
-            }
-        });
-
-        // Initialize Swiper.js
+                    // Initialize Swiper.js
         const swiper = new Swiper('.swiper', {
             direction: 'vertical', // Enable vertical sliding
             mousewheel: true, // Allow mouse wheel navigation

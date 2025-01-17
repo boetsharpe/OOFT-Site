@@ -3,127 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOFT</title>
-
-    <!-- Swiper.js CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-
-    <!-- Custom Styles -->
+    <title>Dynamic Video Background</title>
     <style>
-        /* Fonts and Base Styles */
-        @font-face {
-            font-family: 'Quadrant';
-            src: url('Quadrant.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'HydrogenType';
-            src: url('HydrogenType.woff2') format('woff2'),
-            url('HydrogenType.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap; 
-        }
+        /* Font Face */
         @font-face {
             font-family: 'bb-modern-semi-condensed';
             src: url('bb-modern-semi-condensed.woff2') format('woff2'),
-                url('bb-modern-semi-condensed.woff') format('woff'),
-                url('bb-modern-semi-condensed.ttf') format('truetype');
+                 url('bb-modern-semi-condensed.woff') format('woff'),
+                 url('bb-modern-semi-condensed.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
-  
+
+        /* Global Styles */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            font-family: 'bb-modern-semi-condensed', monospace;
             background-color: #E6E6E6;
             overflow: hidden;
         }
 
-        /* Links */
-        .content a {
-            color: #000;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .content a:hover {
-            opacity: 0.5;
-        }
-
-        /* Swiper Styles */
-        .swiper {
-            width: 100%;
-            height: 100%;
-        }
-
-        .swiper-slide {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            box-sizing: border-box;
-        }
-
-        /* Section One */
-        .section-one {
-            background-color: #E6E6E6;
-            padding: 2rem;
-            z-index: 100;
-            position: relative;
-        }
-
-        .section-one .content {
-            font-family: 'bb-modern-semi-condensed', sans-serif;
-            font-size: clamp(1.5rem, 2.5vw, 3rem);
-            line-height: 1;
-            color: #000;
-            text-align: left;
-        }
-
-        .section-one .content p {
-            margin: 0 0 1.25rem;
-        }
-
-        .section-one .content .email {
-            margin-top: 2.5rem;
-        }
-
-        /* Video Section */
-        .video-section {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .video-section video {
-            position: absolute;
+        /* Video Container */
+        #video-container {
             width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #video-player {
+            width: 100%;
             height: auto;
-            max-height: none;
+            min-height: 100vh;
+            position: absolute;
             bottom: 0;
             left: 0;
-            object-fit: cover;
-            z-index: 100;
+        }
+
+        @media (min-width: 769px) {
+            #video-player {
+                width: 100vw;
+                object-fit: contain;
+                object-position: 0% 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #video-player {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: top left;
+            }
         }
 
         /* Navigation Overlay */
         .nav-overlay {
             position: absolute;
-            top: 2rem;
-            right: 2rem;
+            top: 1.5rem;
+            right: 1.5rem;
             display: flex;
             gap: 1rem;
             z-index: 200;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .nav-overlay.visible {
+            visibility: visible;
+            opacity: 1;
         }
 
         .nav-overlay .link-block {
@@ -140,339 +91,357 @@
             height: 2rem;
         }
 
-        /* Responsive Content Paragraphs */
-        .content p {
-            max-width: 100vw;
-            margin: 0 auto;
-            z-index: 100;
-        }
-
-        @media (max-width: 62rem) {
-            .content p {
-                max-width: 100%;
-            }
-        }
-
-        /* Custom Cursor */
-        .custom-cursor {
-            position: fixed;
-            pointer-events: none;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-            font-family: 'bb-modern-semi-condensed', sans-serif;
-            text-transform: uppercase;
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .video-section:hover .custom-cursor {
-            display: block;
-        }
-
-        /* Optional Video Mask */
-        .video-mask {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
-            mask-size: 100% 100%;
-            -webkit-mask-size: 100% 100%;
-            mask-repeat: no-repeat;
-            -webkit-mask-repeat: no-repeat;
-            overflow: hidden;
-        }
-
-        .video-mask video {
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-        }
-
-        /* Styles for the down arrow */
-        .down-icon {
-            position: absolute;
-            bottom: 2rem;
-            right: 2rem;
-            width: 2rem;
-            height: 2rem;
-            cursor: pointer;
-            z-index: 200;
-        }
-
-        .down-icon img {
-            width: 100%;
-            height: 100%;
-        }
-
         @media (max-width: 768px) {
-            .video-section video {
-                aspect-ratio: 9/16;
-                object-fit: cover;
-                object-position: top left;
-            }
-
-            .nav-overlay, .down-icon {
-                bottom: auto;  /* Reset bottom to auto to ensure top positioning */
-                top: 1rem;
+            .nav-overlay {
+                top: auto;
                 right: 1rem;
+                bottom: 1rem;
                 gap: 0.5rem;
             }
 
-            .nav-overlay .link-block, .down-icon {
+            .nav-overlay .link-block {
                 width: 1.5rem;
                 height: 1.5rem;
             }
 
-            .nav-overlay img, .down-icon img {
+            .nav-overlay img {
                 width: 1.5rem;
                 height: 1.5rem;
-            }
-
-            /* Specific rule for down-icon to keep it at the bottom right */
-            .down-icon {
-                bottom: 1rem;
-                top: auto;  /* Reset top to auto to ensure bottom positioning */
             }
         }
 
-        @media (min-width: 769px) {
-            .video-section video {
-                object-position: bottom left;
+        /* Modal Styles */
+        .info-modal {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(230, 230, 230, 0.8);
+            backdrop-filter: blur(10px);
+            transition: opacity 0.3s ease;
+        }
+
+        .info-modal.visible {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Ensure the modal hides after fading out */
+        .info-modal:not(.visible) {
+            display: none;
+        }
+
+        /* Content Styles */
+        .content {
+            background: rgba(255, 255, 255, 0);
+            overflow: auto;
+            padding: 1.5rem;
+            padding-top: 0rem;
+            font-family: 'bb-modern-semi-condensed', sans-serif;
+            font-size: clamp(1.5rem, 2.5vw, 3rem);
+            line-height: 1;
+            color: #000;
+            text-align: left;
+            width: 90vw; 
+        }
+
+        .content a {
+            color: #000;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .content a:hover {
+            opacity: 0.5;
+        }
+
+        /* Close Icon */
+        .close-icon {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+            z-index: 300;
+            transform: rotate(-45deg);
+            opacity: 0;
+            animation: appearAndRotate 0.3s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            .close-icon {
+                top: auto;
+                right: 1rem;
+                bottom: 1rem;
+                width: 1.5rem;
+                height: 1.5rem;
             }
+        }
+
+        /* Keyframes for Close Icon Animation */
+        @keyframes appearAndRotate {
+            0% {
+                opacity: 0;
+                transform: rotate(-45deg);
+            }
+            100% {
+                opacity: 1;
+                transform: rotate(0deg);
+            }
+        }
+
+        /* Info Icon Rotation */
+        .info-icon.rotate {
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
         }
     </style>
 </head>
-
 <body>
-    <!-- Swiper Container -->
-    <div class="swiper">
-        <div class="swiper-wrapper">
-            <!-- Section One -->
-            <div class="swiper-slide section-one">
-                <div class="content">
-                    <p>Not really a studio. No business plan. Just me in the spare bedroom, with a methodology that channels my ADHD-fuelled restlessness, and an unlikely mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. The personal and the commercial feed each another. Worlds built from thin air. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Experimentation—endless experimentation—and an obsession to find unique answers.
-                    </p>
-            
-                <br>
-                INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
-                EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
-                HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
-                </div>
-                <div class="down-icon">
-                    <img src="svg/down.svg" alt="Navigate Down" id="downArrow">
-                </div>
-            </div>
-
-            <!-- Section Two: Video Section -->
-            <div class="swiper-slide video-section">
-                <video id="videoPlayer" muted playsinline loading="lazy" poster="">
-                </video>
-                <div class="nav-overlay">
-                    <!-- Info Icon -->
-                    <div class="link-block" id="infoLink">
-                        <img src="svg/info.svg" alt="Info">
-                    </div>
-                    <!-- Mute Icon -->
-                    <div class="link-block" id="muteToggle">
-                        <img id="muteIcon" src="svg/unmute.svg" alt="Mute">
-                    </div>
-                    <!-- Reload Icon -->
-                    <div class="link-block" id="reloadIcon">
-                        <img src="svg/reload.svg" alt="Reload">
-                    </div>
-                </div>
-            </div>
+    <div id="video-container">
+        <video id="video-player" muted autoplay playsinline preload="auto"></video>
+    </div>
+    <div class="nav-overlay">
+        <!-- Mute/Unmute Button -->
+        <div class="link-block" id="muteToggle">
+            <img id="muteIcon" src="svg/unmute.svg" alt="Mute/Unmute">
+        </div>
+        <!-- Reload Button -->
+        <div class="link-block" id="reloadIcon">
+            <img src="svg/reload.svg" alt="Reload">
+        </div>
+        <!-- Info Button -->
+        <div class="link-block" id="infoToggle">
+            <img id="infoIcon" src="svg/info.svg" alt="Info">
         </div>
     </div>
+    <div id="infoModal" class="info-modal">
+        <div class="content">
+            <img src="svg/close.svg" alt="Close Modal" class="close-icon" id="closeIcon">
+            <p>Not really a studio. No business plan. Just me in the spare bedroom, with a methodology that channels my ADHD-fuelled restlessness, and an unlikely mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. The personal and the commercial feed each another. Worlds built from thin air. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Experimentation—endless experimentation—and an obsession to find unique answers.
+            </p>
     
-        <!-- Swiper.js Script -->
-        <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-        <script>
-            const videoPlayer = document.getElementById('videoPlayer');
-            const infoLink = document.getElementById('infoLink');
+        <br>
+        INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
+        EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
+        HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+        </div>
+        <div class="down-icon">
+            <img src="svg/down.svg" alt="Navigate Down" id="downArrow">
+        </div>
+    </div>
+    <link rel="preload" href="svg/mute.svg" as="image">
+    <link rel="preload" href="svg/unmute.svg" as="image">
+    <link rel="preload" href="svg/reload.svg" as="image">
+    <link rel="preload" href="svg/info.svg" as="image">
+    <link rel="preload" href="svg/close.svg" as="image">
+    <link rel="preload" href="svg/down.svg" as="image">
+
+    <script>
+      // Updated Arrays of 1440x1440 video links and corresponding poster images
+const videoLinks = [
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_ASCII.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Burnout.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Candle.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Clay.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Condensation.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Goo.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Mirror%20comp.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Squeeze.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Stickers.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Tech%20comp.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Wood1.mp4",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_milk%20comp.mp4"
+];
+
+const imageLinks = [
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/ASCII.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Burnout.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Candle.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Clay.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Condensation.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Goo.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Mirror%20comp.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Squeeze.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Stickers.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Tech%20comp.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Wood1.jpg",
+    "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/milk%20comp.jpg"
+];
+    
+        const mobileVideoLinks = [
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech.mp4",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood.mp4",
+        ];
+    
+        const mobileImageLinks = [
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech_first_frame.jpg",
+            "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood_first_frame.jpg",
+        ];
+
+        // Utility Functions
+        const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    
+        const initializeVideo = () => {
+            const videoPlayer = document.getElementById('video-player');
+            const isMobile = window.innerWidth <= 768;
+            const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+            const imageArray = isMobile ? mobileImageLinks : imageLinks;
+    
+            // Randomly select a video and show its poster
+            let randomIndex = Math.floor(Math.random() * videoArray.length);
+            videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+            videoPlayer.poster = imageArray[randomIndex];
+    
+            // Ensure poster is shown while loading
+            videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+            videoPlayer.style.backgroundSize = "cover";
+            videoPlayer.style.backgroundPosition = "center";
+    
+            videoPlayer.addEventListener('loadeddata', () => {
+                // Remove poster background once video is ready
+                videoPlayer.style.backgroundImage = "none";
+    
+                // Attempt to play the video
+                videoPlayer.play().catch(error => {
+                    console.warn("Autoplay blocked. User interaction may be required:", error);
+                    // If autoplay fails, try again when the user interacts
+                    videoPlayer.addEventListener('click', () => {
+                        videoPlayer.play().catch(error => console.error("Error playing video:", error));
+                    });
+                });
+            });
+    
+            videoPlayer.addEventListener('ended', () => playNextVideo(videoPlayer));
+        };
+    
+        const playNextVideo = (videoPlayer) => {
+            const isMobile = window.innerWidth <= 530;
+            const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+            const imageArray = isMobile ? mobileImageLinks : imageLinks;
+    
+            // Randomly select the next video
+            let currentSrc = videoPlayer.src.split('?')[0];
+            let nextIndex = Math.floor(Math.random() * videoArray.length);
+    
+            videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
+            videoPlayer.poster = imageArray[nextIndex];
+    
+            // Show poster as background during transition
+            videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
+            videoPlayer.style.backgroundSize = "cover";
+            videoPlayer.style.backgroundPosition = "center";
+    
+            videoPlayer.load();
+    
+            videoPlayer.addEventListener('loadeddata', () => {
+                videoPlayer.style.backgroundImage = "none";
+                videoPlayer.play().catch(error => console.warn("Error playing next video:", error));
+            });
+        };
+    
+        const setupControls = () => {
+            const videoPlayer = document.getElementById('video-player');
             const muteToggle = document.getElementById('muteToggle');
             const muteIcon = document.getElementById('muteIcon');
             const reloadIcon = document.getElementById('reloadIcon');
-            const downArrow = document.getElementById('downArrow');
+            const infoToggle = document.getElementById('infoToggle');
+            const infoModal = document.getElementById('infoModal');
+            const closeIcon = document.getElementById('closeIcon');
     
-            let currentIndex = null;
-            let mobileCurrentIndex = null;
+            let wasMutedBeforeModal = videoPlayer.muted; // Track the initial mute state
     
-            // Arrays of new 1440x1440 video links and corresponding poster images
-            const videoLinks = [
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Burnout.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Candle.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Clay.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Condensation.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Hair%20comp.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Mirror%20comp.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Squeeze.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Tech%20comp.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_Wood1.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/web_milk%20comp.mp4"
-            ];
+            // Load Mute State
+            const savedMuteState = localStorage.getItem('isMuted') === 'true';
+            videoPlayer.muted = savedMuteState;
+            muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
     
-            const imageLinks = [
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Burnout.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Candle.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Clay.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440+optimised/Condensation.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Hair%20comp.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Mirror%20comp.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Squeeze.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Tech%20comp.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/Wood1.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440%20optimised/milk%20comp.jpg"
-            ];
-    
-            // Arrays for Mobile-Specific Videos and Placeholders
-            const mobileVideoLinks = [
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech.mp4",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood.mp4",
-            ];
-    
-            const mobileImageLinks = [
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_clay_first_frame.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_milk_first_frame.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_squeeze_first_frame.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_tech_first_frame.jpg",
-                "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood_first_frame.jpg",
-            ];
-    
-            // Function to check if the current device is mobile based on screen size
-            function isMobile() {
-                return window.matchMedia("(max-width: 768px)").matches;
-            }
-    
-            // Check if the video source needs updating based on current viewport
-            function checkVideoSource() {
-                if (swiper.activeIndex === 1) { // Only if we're on the video slide
-                    if ((isMobile() && videoLinks.includes(videoPlayer.src)) || 
-                        (!isMobile() && mobileVideoLinks.includes(videoPlayer.src))) {
-                        loadVideo();
-                    }
-                }
-            }
-    
-            // Ensure video only plays when on the correct slide
-            function loadVideo() {
-                if (swiper.activeIndex === 1) { // Only play if we're on the video slide
-                    if (isMobile()) {
-                        loadMobileVideo();
-                    } else {
-                        loadDesktopVideo();
-                    }
-                    // Ensure the video plays after setting the source
-                    setTimeout(() => {
-                        if (!videoPlayer.paused) {
-                            videoPlayer.pause();
-                        }
-                        videoPlayer.play().catch(error => {
-                            console.error("Autoplay was prevented:", error);
-                            // If autoplay fails, provide a user interaction to start play
-                            document.body.addEventListener('click', startVideoOnClick, { once: true });
-                        });
-                    }, 500); // Small delay to ensure the video has loaded
-                }
-            }
-    
-            function startVideoOnClick() {
-                if (swiper.activeIndex === 1) { // Only play if we're on the video slide
-                    videoPlayer.play();
-                }
-            }
-    
-            // Desktop video loading logic
-            function loadDesktopVideo() {
-                let nextIndex;
-                do {
-                    nextIndex = Math.floor(Math.random() * videoLinks.length);
-                } while (nextIndex === currentIndex);
-    
-                currentIndex = nextIndex;
-                videoPlayer.src = videoLinks[currentIndex];
-                videoPlayer.poster = imageLinks[currentIndex];
-            }
-    
-            // Mobile video loading logic
-            function loadMobileVideo() {
-                let nextIndex;
-                do {
-                    nextIndex = Math.floor(Math.random() * mobileVideoLinks.length);
-                } while (nextIndex === mobileCurrentIndex);
-    
-                mobileCurrentIndex = nextIndex;
-                videoPlayer.src = mobileVideoLinks[mobileCurrentIndex];
-                videoPlayer.poster = mobileImageLinks[mobileCurrentIndex];
-            }
-    
-            // Event listener for video ending (works for both mobile and desktop)
-            videoPlayer.addEventListener('ended', () => {
-                if (swiper.activeIndex === 1) { // Only load new video if we're on the video slide
-                    loadVideo();
-                }
-            });
-    
-            // Scroll to the first slide when the Info button is clicked
-            infoLink.addEventListener('click', () => {
-                swiper.slideTo(0); // Swiper.js function to navigate to the first slide (index 0)
-            });
-    
-            // Toggle sound on/off
+            // Mute/Unmute Button
             muteToggle.addEventListener('click', () => {
                 videoPlayer.muted = !videoPlayer.muted;
-                muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg"; // Update the icon
+                muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg";
+                localStorage.setItem('isMuted', videoPlayer.muted);
             });
     
-            // Reload video on Reload icon click
+            // Reload Button
             reloadIcon.addEventListener('click', () => {
-                if (swiper.activeIndex === 1) { // Only reload if on the video slide
-                    loadVideo();
+                // Instead of full reload, we can just reset everything
+                initializeVideo();
+                videoPlayer.currentTime = 0; // Reset video to start
+                document.querySelector('.nav-overlay').classList.add('visible'); // Ensure controls are visible
+                if (infoModal.classList.contains('visible')) {
+                    infoModal.classList.remove('visible');
+                    setTimeout(() => infoModal.style.display = 'none', 300);
                 }
             });
     
-            // Navigate down to video section
-            downArrow.addEventListener('click', () => {
-                swiper.slideTo(1);
-            });
-
-                    // Initialize Swiper.js
-        const swiper = new Swiper('.swiper', {
-            direction: 'vertical', // Enable vertical sliding
-            mousewheel: true, // Allow mouse wheel navigation
-            slidesPerView: 1, // Show one section at a time
-            speed: 300, // Snappier transition duration
-            initialSlide: 1, // Start with the second section in view
-        });
-
-        // Pause/Resume video based on active slide
-        swiper.on('slideChange', () => {
-            if (swiper.activeIndex === 1) {
-                checkVideoSource(); // Check if we need to switch video sources
-                videoPlayer.play(); // Play the video when in view
-            } else {
-                videoPlayer.pause(); // Pause the video when not in view
+            // Modal Open/Close
+            const toggleModal = (isVisible) => {
+                if (isVisible) {
+                    wasMutedBeforeModal = videoPlayer.muted;
+                    videoPlayer.muted = true; // Mute the video when the modal opens
+                    document.querySelector('.nav-overlay').classList.remove('visible'); // Hide the navigation overlay
+                    infoModal.style.display = 'flex'; // Make modal visible before transition
+                    setTimeout(() => infoModal.classList.add('visible'), 10); // Add delay for fade-in
+                } else {
+                    if (!wasMutedBeforeModal) {
+                        videoPlayer.muted = false;
+                    }
+                    document.querySelector('.nav-overlay').classList.add('visible'); // Show the navigation overlay
+                    infoModal.classList.remove('visible'); // Start fade-out
+                    setTimeout(() => {
+                        infoModal.style.display = 'none'; // Ensure modal is hidden after fade-out
+                    }, 300); // Match this timeout to the CSS `transition` duration (0.3s)
+                }
+            };
+    
+            infoToggle.addEventListener('click', () => toggleModal(true));
+            closeIcon.addEventListener('click', () => toggleModal(false));
+        };
+    
+        // Throttled Resize Handler
+        let lastExecutionTime = 0;
+        const throttleInterval = 50;
+    
+        window.addEventListener('resize', () => {
+            const currentTime = Date.now();
+    
+            if (currentTime - lastExecutionTime > throttleInterval) {
+                lastExecutionTime = currentTime;
+                initializeVideo();
             }
         });
-
-        // Update the resize event to check for changes even when not on the video slide
-        window.addEventListener('resize', () => {
-            checkVideoSource();
+    
+        // Ensure video starts playing on initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeVideo();
+            setupControls();
+            
+            // Make sure controls are visible after everything is set up
+            document.querySelector('.nav-overlay').classList.add('visible');
+            
+            // If the video doesn't play, try muting and playing again
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.play().catch(() => {
+                // If play() fails, try muting then playing again
+                videoPlayer.muted = true;
+                videoPlayer.play().catch(error => {
+                    console.warn("Autoplay still blocked. User interaction required:", error);
+                });
+            });
         });
-
-        // Initially load video based on device type
-        loadVideo();
     </script>
 </body>
 </html>

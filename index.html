@@ -53,10 +53,14 @@
         /* Video Container */
         #video-container {
             width: 100vw;
-            height: 100vh;
+            height: 100%;
             overflow: hidden;
             position: relative;
         }
+
+        .fullscreen-height {
+            height: 100vh; /* Fallback for browsers that support 100vh correctly */
+}
 
         #video-player {
             width: 100%;
@@ -229,7 +233,7 @@
     </style>
 </head>
 <body>
-    <div id="video-container">
+    <div id="video-container" class="fullscreen-height">
         <video id="video-player" muted autoplay playsinline preload="auto"></video>
     </div>
     <div class="nav-overlay">
@@ -249,7 +253,7 @@
     <div id="infoModal" class="info-modal">
         <div class="content">
             <img src="svg/close.svg" alt="Close Modal" class="close-icon" id="closeIcon">
-            <p>Not really a studio. No business plan. Just me in the spare bedroom, with a methodology that channels my ADHD-fuelled restlessness, and an unlikely mix of skills into something pure. To make things for myself. As a creative plugin for agencies and clients. The personal and the commercial feed each another. Worlds built from thin air. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Experimentation—endless experimentation—and an obsession to find unique answers.
+            <p>Not really a studio. No business plan. Just a place to channel an unlikely mix of skills and interests into something pure. To make more things for myself. As a creative plugin for agencies and clients. Worlds built from thin air. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Experimentation—endless experimentation.
             </p>
     
         <br>
@@ -267,7 +271,16 @@
     <link rel="preload" href="svg/info.svg" as="image">
     <link rel="preload" href="svg/close.svg" as="image">
     <link rel="preload" href="svg/down.svg" as="image">
-
+    <script>
+        const adjustFullHeight = () => {
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.style.height = `${window.innerHeight}px`;
+        };
+    
+        // Adjust height on load and resize
+        window.addEventListener('DOMContentLoaded', adjustFullHeight);
+        window.addEventListener('resize', adjustFullHeight);
+    </script>
     <script>
       // Updated Arrays of 1440x1440 video links and corresponding poster images
 const videoLinks = [
@@ -392,8 +405,8 @@ const imageLinks = [
     
             // Load Mute State
             const savedMuteState = localStorage.getItem('isMuted') === 'true';
-videoPlayer.muted = savedMuteState;
-muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
+            videoPlayer.muted = savedMuteState;
+            muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
     
             // Mute/Unmute Button
             muteToggle.addEventListener('click', () => {

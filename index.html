@@ -392,8 +392,8 @@ const imageLinks = [
     
             // Load Mute State
             const savedMuteState = localStorage.getItem('isMuted') === 'true';
-            videoPlayer.muted = savedMuteState;
-            muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
+videoPlayer.muted = savedMuteState;
+muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
     
             // Mute/Unmute Button
             muteToggle.addEventListener('click', () => {

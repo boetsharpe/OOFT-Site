@@ -160,6 +160,14 @@ body, html {
     right: 1.5rem;
     /* Inherits from .button */
 }
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .close-icon {
+        top: auto; /* Remove top positioning */
+        bottom: 1rem; /* Align with nav overlay buttons */
+        right: 1rem; /* Match the position of nav-overlay */
+    }
+}
 
 @media (max-width: 768px) {
     .nav-overlay {
@@ -223,7 +231,7 @@ body, html {
     padding: 1.5rem;
     padding-top: 0rem;
     font-family: 'bb-modern-semi-condensed', sans-serif;
-    font-size: clamp(1.5rem, 2.5vw, 3rem);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
     line-height: 1;
     color: #000;
     text-align: left;
@@ -275,7 +283,7 @@ body, html {
                 Just a place to channel an unlikely mix of skills and interests. 
                 To make things for myself. 
                 A creative plugin for agencies and clients. 
-                Worlds built from thin air. Advertising. CGI. 
+                Worlds built from thin air. Ideas. Advertising. CGI. 
                 Graphic design. Art. Digital things. Physical things. All the things.
             </p>
             <br>

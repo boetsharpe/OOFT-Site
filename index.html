@@ -181,6 +181,7 @@ body, html {
 }
 
 /* Modal Styles */
+/* Modal Styles */
 .info-modal {
     display: none;
     opacity: 0;
@@ -192,7 +193,7 @@ body, html {
     height: 100vh;
     background-color: rgba(230, 230, 230, 0.8);
     backdrop-filter: blur(10px);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease; /* Modal fade-in */
 }
 
 .info-modal.visible {
@@ -201,6 +202,15 @@ body, html {
     pointer-events: auto;
 }
 
+/* Fade-in animation for all content inside the modal */
+.info-modal .content > * {
+    opacity: 0;
+    transition: opacity 0.3s ease 0.3s; /* Delay fade-in by 0.3s after modal appears */
+}
+
+.info-modal.visible .content > * {
+    opacity: 1;
+}
 /* Ensure the modal hides after fading out */
 .info-modal:not(.visible) {
     display: none;
@@ -256,7 +266,6 @@ body, html {
     <!-- Info Modal -->
     <div id="infoModal" class="info-modal">
         <div class="content">
-            <!-- Close Button -->
             <div class="close-icon button" id="closeIcon">
                 <img src="svg/close.svg" alt="Close Modal">
             </div>
@@ -269,12 +278,11 @@ body, html {
                 Graphic design. Art. Digital things. Physical things. All the things.
             </p>
             <br>
-            INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
-            EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
-            HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
-        </div>
-        <div class="down-icon">
-            <img src="svg/down.svg" alt="Navigate Down" id="downArrow">
+            <div>
+                INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
+                EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
+                HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+            </div>
         </div>
     </div>
 

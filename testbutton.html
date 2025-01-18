@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOFT - Buttons Only</title>
+    <style>
+        /* Reset and box-sizing */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Button Styling */
+        body {
+            background-color: #E6E6E6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .nav-overlay {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.8rem;
+            border: 1.3px solid black;
+            background-color: rgba(255, 255, 255, 0);
+            text-decoration: none;
+            transition: border-radius 0.3s ease;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            border-radius: 0.4rem;
+        }
+
+        .button img {
+            width: 50%;
+            height: 50%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Button Container -->
+    <div class="nav-overlay">
+        <!-- Mute/Unmute Button -->
+        <div class="button" id="muteButton">
+            <img id="muteIcon" src="svg/mute.svg" alt="Mute/Unmute">
+        </div>
+        <!-- Reload Button -->
+        <div class="button" id="reloadButton">
+            <img src="svg/reload.svg" alt="Reload">
+        </div>
+        <!-- Info Button -->
+        <div class="button" id="infoButton">
+            <img src="svg/info.svg" alt="Info">
+        </div>
+    </div>
+</body>
+</html>

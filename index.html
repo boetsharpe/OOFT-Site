@@ -30,247 +30,261 @@
 
     <!-- Preload Fonts -->
     <style>
-        /* Font Face */
-        @font-face {
-            font-family: 'bb-modern-semi-condensed';
-            src: url('bb-modern-semi-condensed.woff2') format('woff2'),
-                 url('bb-modern-semi-condensed.woff') format('woff'),
-                 url('bb-modern-semi-condensed.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        /* Global Styles */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #E6E6E6;
-            overflow: hidden;
-        }
-
-        /* Video Container */
-        #video-container {
-            width: 100vw;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .fullscreen-height {
-            height: 100vh; /* Fallback for browsers that support 100vh correctly */
+     /* Font Face */
+@font-face {
+    font-family: 'bb-modern-semi-condensed';
+    src: url('bb-modern-semi-condensed.woff2') format('woff2'),
+         url('bb-modern-semi-condensed.woff') format('woff'),
+         url('bb-modern-semi-condensed.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
-        #video-player {
-            width: 100%;
-            height: auto;
-            min-height: 100vh;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-        }
+/* Global Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #E6E6E6;
+    overflow: hidden;
+    user-select: none; /* Disables text selection */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    cursor: default; /* Prevents text selection cursor */
+}
 
-        @media (min-width: 769px) {
-            #video-player {
-                width: 100vw;
-                object-fit: contain;
-                object-position: 0% 100%;
-            }
-        }
+/* Video Container */
+#video-container {
+    width: 100vw;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
 
-        @media (max-width: 768px) {
-            #video-player {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: top left;
-            }
-        }
+.fullscreen-height {
+    height: 100vh; /* Fallback for browsers that support 100vh correctly */
+}
 
-        /* Navigation Overlay */
-        .nav-overlay {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            z-index: 200;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            visibility: hidden;
-            opacity: 0;
-        }
+#video-player {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
 
-        .nav-overlay.visible {
-            visibility: visible;
-            opacity: 1;
-        }
+@media (min-width: 769px) {
+    #video-player {
+        width: 100vw;
+        object-fit: contain;
+        object-position: 0% 100%;
+    }
+}
 
-        .nav-overlay .link-block {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2rem;
-            height: 2rem;
-            cursor: pointer;
-        }
+@media (max-width: 768px) {
+    #video-player {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top left;
+    }
+}
 
-        .nav-overlay img {
-            width: 2rem;
-            height: 2rem;
-        }
+/* Navigation Overlay */
+.nav-overlay {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.2rem;
+    z-index: 200;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    visibility: hidden;
+    opacity: 0;
+}
 
-        @media (max-width: 768px) {
-            .nav-overlay {
-                top: auto;
-                right: 1rem;
-                bottom: 1rem;
-                gap: 0.5rem;
-            }
+.nav-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
 
-            .nav-overlay .link-block {
-                width: 1.5rem;
-                height: 1.5rem;
-            }
+/* General Button Styling */
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem; /* Button size */
+    height: 1.5rem; /* Button size */
+    border-radius: 0.4rem; /* Rounded corners */
+    border: 0x solid black; /* Border style */
+    background-color: rgba(187, 187, 187, 0.641); /* Transparent background */
+    text-decoration: none; /* No underline */
+    transition: background-color 0.3s ease, border-radius 0.3s ease; /* Smooth hover transition */
+    cursor: pointer; /* Pointer cursor */
+    overflow: hidden; /* Prevent content overflow */
+}
 
-            .nav-overlay img {
-                width: 1.5rem;
-                height: 1.5rem;
-            }
-        }
+.button:hover {
+    background-color: #000; /* Black background on hover */
+    border-color: #fff; /* White border on hover */
+}
 
-        /* Modal Styles */
-        .info-modal {
-            display: none;
-            opacity: 0;
-            pointer-events: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(230, 230, 230, 0.8);
-            backdrop-filter: blur(10px);
-            transition: opacity 0.3s ease;
-        }
+/* Shared SVG Styling */
+.button img {
+    max-width: 50%; /* Restrict SVG width relative to the container */
+    max-height: 50%; /* Restrict SVG height relative to the container */
+    object-fit: contain; /* Ensure SVG scales properly */
+    display: block; /* Remove inline spacing */
+    margin: auto; /* Center SVG inside the container */
+    filter: invert(0); /* Default black icon */
+    transition: filter 0.3s ease; /* Smooth transition for hover */
 
-        .info-modal.visible {
-            display: flex;
-            opacity: 1;
-            pointer-events: auto;
-        }
+}
 
-        /* Ensure the modal hides after fading out */
-        .info-modal:not(.visible) {
-            display: none;
-        }
+.button:hover img {
+    filter: invert(1); /* Invert SVG color to white on hover */
+}
 
-        /* Content Styles */
-        .content {
-            background: rgba(255, 255, 255, 0);
-            overflow: auto;
-            padding: 1.5rem;
-            padding-top: 0rem;
-            font-family: 'bb-modern-semi-condensed', sans-serif;
-            font-size: clamp(1.5rem, 2.5vw, 3rem);
-            line-height: 1;
-            color: #000;
-            text-align: left;
-            width: 90vw; 
-        }
+/* Specific to Navigation Overlay Buttons */
+.nav-overlay .link-block {
+    /* Inherits from .button */
+}
 
-        .content a {
-            color: #000;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
+/* Specific to Close Icon */
+.close-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    /* Inherits from .button */
+}
 
-        .content a:hover {
-            opacity: 0.5;
-        }
+@media (max-width: 768px) {
+    .nav-overlay {
+        top: auto;
+        right: 1rem;
+        bottom: 1rem;
+        gap: 0.2rem;
+    }
 
-        /* Close Icon */
-        .close-icon {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 2rem;
-            height: 2rem;
-            cursor: pointer;
-            z-index: 300;
-            transform: rotate(-45deg);
-            opacity: 0;
-            animation: appearAndRotate 0.3s ease forwards;
-        }
+    .button {
+        width: 1.5rem; /* Smaller button size */
+        height: 1.5rem; /* Smaller button size */
+    }
 
-        @media (max-width: 768px) {
-            .close-icon {
-                top: auto;
-                right: 1rem;
-                bottom: 1rem;
-                width: 1.5rem;
-                height: 1.5rem;
-            }
-        }
+    .button img {
+        max-width: 50%; /* Smaller SVG size */
+        max-height: 50%; /* Smaller SVG size */
+    }
+}
 
-        /* Keyframes for Close Icon Animation */
-        @keyframes appearAndRotate {
-            0% {
-                opacity: 0;
-                transform: rotate(-45deg);
-            }
-            100% {
-                opacity: 1;
-                transform: rotate(0deg);
-            }
-        }
+/* Modal Styles */
+.info-modal {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(230, 230, 230, 0.8);
+    backdrop-filter: blur(10px);
+    transition: opacity 0.3s ease;
+}
 
-        /* Info Icon Rotation */
-        .info-icon.rotate {
-            transform: rotate(45deg);
-            transition: transform 0.3s ease;
-        }
-    </style>
+.info-modal.visible {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Ensure the modal hides after fading out */
+.info-modal:not(.visible) {
+    display: none;
+}
+
+/* Content Styles */
+.content {
+    background: rgba(255, 255, 255, 0);
+    overflow: auto;
+    padding: 1.5rem;
+    padding-top: 0rem;
+    font-family: 'bb-modern-semi-condensed', sans-serif;
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
+    line-height: 1;
+    color: #000;
+    text-align: left;
+    width: 90vw; 
+}
+
+.content a {
+    color: #000;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.content a:hover {
+    opacity: 0.5;
+}
+</style>
 </head>
 <body>
-    <div id="video-container" class="fullscreen-height">
+      <!-- Video Container -->
+      <div id="video-container" class="fullscreen-height">
         <video id="video-player" muted autoplay playsinline preload="auto"></video>
     </div>
-    <div class="nav-overlay">
+
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay visible">
         <!-- Mute/Unmute Button -->
-        <div class="link-block" id="muteToggle">
+        <div class="link-block button" id="muteToggle">
             <img id="muteIcon" src="svg/unmute.svg" alt="Mute/Unmute">
         </div>
         <!-- Reload Button -->
-        <div class="link-block" id="reloadIcon">
+        <div class="link-block button" id="reloadIcon">
             <img src="svg/reload.svg" alt="Reload">
         </div>
         <!-- Info Button -->
-        <div class="link-block" id="infoToggle">
+        <div class="link-block button" id="infoToggle">
             <img id="infoIcon" src="svg/info.svg" alt="Info">
         </div>
     </div>
+
+    <!-- Info Modal -->
     <div id="infoModal" class="info-modal">
         <div class="content">
-            <img src="svg/close.svg" alt="Close Modal" class="close-icon" id="closeIcon">
-            <p>Not really a studio. No business plan. Just a place to channel an unlikely mix of skills and interests into something pure. To make more things for myself. As a creative plugin for agencies and clients. Worlds built from thin air. Advertising. Writing. CGI. Graphic design. Concepting. Naming brands. Designing systems. Art. Digital things. Physical things. Experimentation—endless experimentation.
+            <!-- Close Button -->
+            <div class="close-icon button" id="closeIcon">
+                <img src="svg/close.svg" alt="Close Modal">
+            </div>
+            <p>
+                Not really a studio. No business plan. 
+                Just a place to channel an unlikely mix of skills and interests. 
+                To make things for myself. 
+                A creative plugin for agencies and clients. 
+                Worlds built from thin air. Advertising. CGI. 
+                Graphic design. Art. Digital things. Physical things. All the things.
             </p>
-    
-        <br>
-        INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
-        EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
-        HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+            <br>
+            INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
+            EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
+            HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
         </div>
         <div class="down-icon">
             <img src="svg/down.svg" alt="Navigate Down" id="downArrow">
         </div>
     </div>
+
     <link rel="preload" href="svg/mute.svg" as="image">
     <link rel="preload" href="svg/unmute.svg" as="image">
     <link rel="preload" href="svg/reload.svg" as="image">
     <link rel="preload" href="svg/info.svg" as="image">
     <link rel="preload" href="svg/close.svg" as="image">
     <link rel="preload" href="svg/down.svg" as="image">
+
     <script>
         const adjustFullHeight = () => {
             const videoContainer = document.getElementById('video-container');
@@ -367,30 +381,36 @@ const imageLinks = [
             videoPlayer.addEventListener('ended', () => playNextVideo(videoPlayer));
         };
     
-        const playNextVideo = (videoPlayer) => {
-            const isMobile = window.innerWidth <= 530;
-            const videoArray = isMobile ? mobileVideoLinks : videoLinks;
-            const imageArray = isMobile ? mobileImageLinks : imageLinks;
-    
-            // Randomly select the next video
-            let currentSrc = videoPlayer.src.split('?')[0];
-            let nextIndex = Math.floor(Math.random() * videoArray.length);
-    
-            videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
-            videoPlayer.poster = imageArray[nextIndex];
-    
-            // Show poster as background during transition
-            videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
-            videoPlayer.style.backgroundSize = "cover";
-            videoPlayer.style.backgroundPosition = "center";
-    
-            videoPlayer.load();
-    
-            videoPlayer.addEventListener('loadeddata', () => {
-                videoPlayer.style.backgroundImage = "none";
-                videoPlayer.play().catch(error => console.warn("Error playing next video:", error));
-            });
-        };
+        let lastPlayedIndex = null; // Variable to track the last played video's index
+
+const playNextVideo = (videoPlayer) => {
+    const isMobile = window.innerWidth <= 530;
+    const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+    const imageArray = isMobile ? mobileImageLinks : imageLinks;
+
+    let nextIndex;
+
+    do {
+        nextIndex = Math.floor(Math.random() * videoArray.length);
+    } while (nextIndex === lastPlayedIndex); // Ensure the new index is different from the last
+
+    lastPlayedIndex = nextIndex; // Update the last played index
+
+    videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[nextIndex];
+
+    // Show poster as background during transition
+    videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.load();
+
+    videoPlayer.addEventListener('loadeddata', () => {
+        videoPlayer.style.backgroundImage = "none";
+        videoPlayer.play().catch(error => console.warn("Error playing next video:", error));
+    });
+};
     
         const setupControls = () => {
             const videoPlayer = document.getElementById('video-player');

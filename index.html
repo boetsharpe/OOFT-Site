@@ -273,10 +273,10 @@ body, html {
 
     <!-- Info Modal -->
     <div id="infoModal" class="info-modal">
+        <div class="close-icon button" id="closeIcon">
+            <img src="svg/close.svg" alt="Close Modal">
+        </div>
         <div class="content">
-            <div class="close-icon button" id="closeIcon">
-                <img src="svg/close.svg" alt="Close Modal">
-            </div>
             <p>
                 Not really a studio. No business plan. 
                 Just a place to channel an unlikely mix of skills and interests. 
@@ -357,57 +357,67 @@ const imageLinks = [
             "https://leslies3bucket.s3.ap-southeast-2.amazonaws.com/OOFT/1440x2560/mob_wood_first_frame.jpg",
         ];
 
-        // Utility Functions
-        const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-    
-        const initializeVideo = () => {
-            const videoPlayer = document.getElementById('video-player');
-            const isMobile = window.innerWidth <= 768;
-            const videoArray = isMobile ? mobileVideoLinks : videoLinks;
-            const imageArray = isMobile ? mobileImageLinks : imageLinks;
-    
-            // Randomly select a video and show its poster
-            let randomIndex = Math.floor(Math.random() * videoArray.length);
-            videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
-            videoPlayer.poster = imageArray[randomIndex];
-    
-            // Ensure poster is shown while loading
-            videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
-            videoPlayer.style.backgroundSize = "cover";
-            videoPlayer.style.backgroundPosition = "center";
-    
-            videoPlayer.addEventListener('loadeddata', () => {
-                // Remove poster background once video is ready
-                videoPlayer.style.backgroundImage = "none";
-    
-                // Attempt to play the video
-                videoPlayer.play().catch(error => {
-                    console.warn("Autoplay blocked. User interaction may be required:", error);
-                    // If autoplay fails, try again when the user interacts
-                    videoPlayer.addEventListener('click', () => {
-                        videoPlayer.play().catch(error => console.error("Error playing video:", error));
-                    });
-                });
-            });
-    
-            videoPlayer.addEventListener('ended', () => playNextVideo(videoPlayer));
-        };
-    
-        let lastPlayedIndex = null; // Variable to track the last played video's index
+        let lastPlayedIndex = null; // To track the last played video's index
 
-const playNextVideo = (videoPlayer) => {
-    const isMobile = window.innerWidth <= 530;
+// Utility function to get the next video index
+const getNextIndex = (arrayLength) => {
+    let nextIndex;
+    do {
+        nextIndex = Math.floor(Math.random() * arrayLength);
+    } while (nextIndex === lastPlayedIndex); // Ensure it's not the same as the last played index
+    return nextIndex;
+};
+
+// Initialize video function
+const initializeVideo = () => {
+    const videoPlayer = document.getElementById('video-player');
+    const isMobile = window.innerWidth <= 768;
     const videoArray = isMobile ? mobileVideoLinks : videoLinks;
     const imageArray = isMobile ? mobileImageLinks : imageLinks;
 
-    let nextIndex;
+    // Get a new random index
+    const randomIndex = getNextIndex(videoArray.length);
+    lastPlayedIndex = randomIndex; // Update the last played index
 
-    do {
-        nextIndex = Math.floor(Math.random() * videoArray.length);
-    } while (nextIndex === lastPlayedIndex); // Ensure the new index is different from the last
+    // Set the video and poster
+    videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[randomIndex];
 
+    // Ensure poster is shown while loading
+    videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.addEventListener('loadeddata', () => {
+        // Remove poster background once video is ready
+        videoPlayer.style.backgroundImage = "none";
+
+        // Attempt to play the video
+        videoPlayer.play().catch((error) => {
+            console.warn("Autoplay blocked. User interaction may be required:", error);
+            // If autoplay fails, try again when the user interacts
+            videoPlayer.addEventListener('click', () => {
+                videoPlayer.play().catch((error) =>
+                    console.error("Error playing video:", error)
+                );
+            });
+        });
+    });
+
+    videoPlayer.addEventListener('ended', () => playNextVideo(videoPlayer));
+};
+
+// Play next video function
+const playNextVideo = (videoPlayer) => {
+    const isMobile = window.innerWidth <= 768;
+    const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+    const imageArray = isMobile ? mobileImageLinks : imageLinks;
+
+    // Get a new random index
+    const nextIndex = getNextIndex(videoArray.length);
     lastPlayedIndex = nextIndex; // Update the last played index
 
+    // Set the video and poster
     videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
     videoPlayer.poster = imageArray[nextIndex];
 
@@ -420,100 +430,102 @@ const playNextVideo = (videoPlayer) => {
 
     videoPlayer.addEventListener('loadeddata', () => {
         videoPlayer.style.backgroundImage = "none";
-        videoPlayer.play().catch(error => console.warn("Error playing next video:", error));
+        videoPlayer.play().catch((error) =>
+            console.warn("Error playing next video:", error)
+        );
     });
 };
-    
-        const setupControls = () => {
-            const videoPlayer = document.getElementById('video-player');
-            const muteToggle = document.getElementById('muteToggle');
-            const muteIcon = document.getElementById('muteIcon');
-            const reloadIcon = document.getElementById('reloadIcon');
-            const infoToggle = document.getElementById('infoToggle');
-            const infoModal = document.getElementById('infoModal');
-            const closeIcon = document.getElementById('closeIcon');
-    
-            let wasMutedBeforeModal = videoPlayer.muted; // Track the initial mute state
-    
-            // Load Mute State
-            const savedMuteState = localStorage.getItem('isMuted') === 'true';
-            videoPlayer.muted = savedMuteState;
-            muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
-    
-            // Mute/Unmute Button
-            muteToggle.addEventListener('click', () => {
-                videoPlayer.muted = !videoPlayer.muted;
-                muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg";
-                localStorage.setItem('isMuted', videoPlayer.muted);
-            });
-    
-            // Reload Button
-            reloadIcon.addEventListener('click', () => {
-                // Instead of full reload, we can just reset everything
-                initializeVideo();
-                videoPlayer.currentTime = 0; // Reset video to start
-                document.querySelector('.nav-overlay').classList.add('visible'); // Ensure controls are visible
-                if (infoModal.classList.contains('visible')) {
-                    infoModal.classList.remove('visible');
-                    setTimeout(() => infoModal.style.display = 'none', 300);
-                }
-            });
-    
-            // Modal Open/Close
-            const toggleModal = (isVisible) => {
-                if (isVisible) {
-                    wasMutedBeforeModal = videoPlayer.muted;
-                    videoPlayer.muted = true; // Mute the video when the modal opens
-                    document.querySelector('.nav-overlay').classList.remove('visible'); // Hide the navigation overlay
-                    infoModal.style.display = 'flex'; // Make modal visible before transition
-                    setTimeout(() => infoModal.classList.add('visible'), 10); // Add delay for fade-in
-                } else {
-                    if (!wasMutedBeforeModal) {
-                        videoPlayer.muted = false;
-                    }
-                    document.querySelector('.nav-overlay').classList.add('visible'); // Show the navigation overlay
-                    infoModal.classList.remove('visible'); // Start fade-out
-                    setTimeout(() => {
-                        infoModal.style.display = 'none'; // Ensure modal is hidden after fade-out
-                    }, 300); // Match this timeout to the CSS `transition` duration (0.3s)
-                }
-            };
-    
-            infoToggle.addEventListener('click', () => toggleModal(true));
-            closeIcon.addEventListener('click', () => toggleModal(false));
-        };
-    
-        // Throttled Resize Handler
-        let lastExecutionTime = 0;
-        const throttleInterval = 50;
-    
-        window.addEventListener('resize', () => {
-            const currentTime = Date.now();
-    
-            if (currentTime - lastExecutionTime > throttleInterval) {
-                lastExecutionTime = currentTime;
-                initializeVideo();
+
+// Setup controls and interactions
+const setupControls = () => {
+    const videoPlayer = document.getElementById('video-player');
+    const muteToggle = document.getElementById('muteToggle');
+    const muteIcon = document.getElementById('muteIcon');
+    const reloadIcon = document.getElementById('reloadIcon');
+    const infoToggle = document.getElementById('infoToggle');
+    const infoModal = document.getElementById('infoModal');
+    const closeIcon = document.getElementById('closeIcon');
+
+    let wasMutedBeforeModal = videoPlayer.muted; // Track the initial mute state
+
+    // Load Mute State
+    const savedMuteState = localStorage.getItem('isMuted') === 'true';
+    videoPlayer.muted = savedMuteState;
+    muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
+
+    // Mute/Unmute Button
+    muteToggle.addEventListener('click', () => {
+        videoPlayer.muted = !videoPlayer.muted;
+        muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg";
+        localStorage.setItem('isMuted', videoPlayer.muted);
+    });
+
+    // Reload Button
+    reloadIcon.addEventListener('click', () => {
+        initializeVideo(); // Reload a new video
+        videoPlayer.currentTime = 0; // Reset video to start
+        document.querySelector('.nav-overlay').classList.add('visible'); // Ensure controls are visible
+        if (infoModal.classList.contains('visible')) {
+            infoModal.classList.remove('visible');
+            setTimeout(() => (infoModal.style.display = 'none'), 300);
+        }
+    });
+
+    // Modal Open/Close
+    const toggleModal = (isVisible) => {
+        if (isVisible) {
+            wasMutedBeforeModal = videoPlayer.muted;
+            videoPlayer.muted = true; // Mute the video when the modal opens
+            document.querySelector('.nav-overlay').classList.remove('visible'); // Hide the navigation overlay
+            infoModal.style.display = 'flex'; // Make modal visible before transition
+            setTimeout(() => infoModal.classList.add('visible'), 10); // Add delay for fade-in
+        } else {
+            if (!wasMutedBeforeModal) {
+                videoPlayer.muted = false;
             }
+            document.querySelector('.nav-overlay').classList.add('visible'); // Show the navigation overlay
+            infoModal.classList.remove('visible'); // Start fade-out
+            setTimeout(() => {
+                infoModal.style.display = 'none'; // Ensure modal is hidden after fade-out
+            }, 300); // Match this timeout to the CSS `transition` duration (0.3s)
+        }
+    };
+
+    infoToggle.addEventListener('click', () => toggleModal(true));
+    closeIcon.addEventListener('click', () => toggleModal(false));
+};
+
+// Throttled Resize Handler
+let lastExecutionTime = 0;
+const throttleInterval = 50;
+
+window.addEventListener('resize', () => {
+    const currentTime = Date.now();
+
+    if (currentTime - lastExecutionTime > throttleInterval) {
+        lastExecutionTime = currentTime;
+        initializeVideo();
+    }
+});
+
+// Ensure video starts playing on initial load
+document.addEventListener('DOMContentLoaded', () => {
+    initializeVideo();
+    setupControls();
+
+    // Make sure controls are visible after everything is set up
+    document.querySelector('.nav-overlay').classList.add('visible');
+
+    // If the video doesn't play, try muting and playing again
+    const videoPlayer = document.getElementById('video-player');
+    videoPlayer.play().catch(() => {
+        // If play() fails, try muting then playing again
+        videoPlayer.muted = true;
+        videoPlayer.play().catch((error) => {
+            console.warn("Autoplay still blocked. User interaction required:", error);
         });
-    
-        // Ensure video starts playing on initial load
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeVideo();
-            setupControls();
-            
-            // Make sure controls are visible after everything is set up
-            document.querySelector('.nav-overlay').classList.add('visible');
-            
-            // If the video doesn't play, try muting and playing again
-            const videoPlayer = document.getElementById('video-player');
-            videoPlayer.play().catch(() => {
-                // If play() fails, try muting then playing again
-                videoPlayer.muted = true;
-                videoPlayer.play().catch(error => {
-                    console.warn("Autoplay still blocked. User interaction required:", error);
-                });
-            });
-        });
+    });
+});
     </script>
 </body>
 </html>

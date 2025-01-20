@@ -29,225 +29,207 @@
 
     <!-- Preload Fonts -->
     <style>
-     /* Font Face */
-@font-face {
-    font-family: 'bb-modern-semi-condensed';
-    src: url('bb-modern-semi-condensed.woff2') format('woff2'),
-         url('bb-modern-semi-condensed.woff') format('woff'),
-         url('bb-modern-semi-condensed.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* Global Styles */
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #E6E6E6;
-    overflow: hidden;
-    user-select: none; /* Disables text selection */
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE/Edge */
-    cursor: default; /* Prevents text selection cursor */
-}
-
-/* Video Container */
-#video-container {
-    width: 100vw;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-}
-
-.fullscreen-height {
-    height: 100vh; /* Fallback for browsers that support 100vh correctly */
-}
-
-#video-player {
-    width: 100%;
-    height: auto;
-    min-height: 100vh;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-@media (min-width: 769px) {
-    #video-player {
-        width: 100vw;
-        object-fit: contain;
-        object-position: 0% 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    #video-player {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top left;
-    }
-}
-
-/* Navigation Overlay */
-.nav-overlay {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    display: flex;
-    gap: 0.2rem;
-    z-index: 200;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    visibility: hidden;
-    opacity: 0;
-}
-
-.nav-overlay.visible {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* General Button Styling */
-.button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 1.5rem; /* Button size */
-    height: 1.5rem; /* Button size */
-    border-radius: 0.4rem; /* Rounded corners */
-    border: 0x solid black; /* Border style */
-    background-color: rgba(187, 187, 187, 0.641); /* Transparent background */
-    text-decoration: none; /* No underline */
-    transition: background-color 0.3s ease, border-radius 0.3s ease; /* Smooth hover transition */
-    cursor: pointer; /* Pointer cursor */
-    overflow: hidden; /* Prevent content overflow */
-}
-
-.button:hover {
-    background-color: #000; /* Black background on hover */
-    border-color: #fff; /* White border on hover */
-}
-
-/* Shared SVG Styling */
-.button img {
-    max-width: 50%; /* Restrict SVG width relative to the container */
-    max-height: 50%; /* Restrict SVG height relative to the container */
-    object-fit: contain; /* Ensure SVG scales properly */
-    display: block; /* Remove inline spacing */
-    margin: auto; /* Center SVG inside the container */
-    filter: invert(0); /* Default black icon */
-    transition: filter 0.3s ease; /* Smooth transition for hover */
-
-}
-
-.button:hover img {
-    filter: invert(1); /* Invert SVG color to white on hover */
-}
-
-/* Specific to Navigation Overlay Buttons */
-.nav-overlay .link-block {
-    /* Inherits from .button */
-}
-
-/* Specific to Close Icon */
-.close-icon {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    /* Inherits from .button */
-}
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-    .close-icon {
-        top: auto; /* Remove top positioning */
-        bottom: 1rem; /* Align with nav overlay buttons */
-        right: 1rem; /* Match the position of nav-overlay */
-    }
-}
-
-@media (max-width: 768px) {
-    .nav-overlay {
-        top: auto;
-        right: 1rem;
-        bottom: 1rem;
-        gap: 0.2rem;
-    }
-
-    .button {
-        width: 1.5rem; /* Smaller button size */
-        height: 1.5rem; /* Smaller button size */
-    }
-
-    .button img {
-        max-width: 50%; /* Smaller SVG size */
-        max-height: 50%; /* Smaller SVG size */
-    }
-}
-
-/* Modal Styles */
-/* Modal Styles */
-.info-modal {
-    display: none;
-    opacity: 0;
-    pointer-events: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(230, 230, 230, 0.8);
-    backdrop-filter: blur(5px);
-    transition: opacity 0.3s ease; /* Modal fade-in */
-}
-
-.info-modal.visible {
-    display: flex;
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* Fade-in animation for all content inside the modal */
-.info-modal .content > * {
-    opacity: 0;
-    transition: opacity 0.3s ease 0.3s; /* Delay fade-in by 0.3s after modal appears */
-}
-
-.info-modal.visible .content > * {
-    opacity: 1;
-}
-/* Ensure the modal hides after fading out */
-.info-modal:not(.visible) {
-    display: none;
-}
-
-/* Content Styles */
-.content {
-    background: rgba(255, 255, 255, 0);
-    overflow: auto;
-    padding: 1.5rem;
-    padding-top: 0rem;
-    font-family: 'bb-modern-semi-condensed', sans-serif;
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-    line-height: 1;
-    color: #000;
-    text-align: left;
-    width: 90vw; 
-}
-
-.content a {
-    color: #000;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-}
-
-.content a:hover {
-    opacity: 0.5;
-}
-
-</style>
+        /* Font Face */
+        @font-face {
+            font-family: 'bb-modern-semi-condensed';
+            src: url('bb-modern-semi-condensed.woff2') format('woff2'),
+                 url('bb-modern-semi-condensed.woff') format('woff'),
+                 url('bb-modern-semi-condensed.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        /* Global Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #E6E6E6;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            cursor: default;
+        }
+        
+        /* Video Container */
+        #video-container {
+            width: 100vw;
+            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            overflow: hidden;
+            position: relative;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .fullscreen-height {
+            height: 100vh; /* Fallback for browsers that support 100vh correctly */
+        }
+        
+        #video-player {
+            width: 100%;
+            height: auto;
+            min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            object-fit: cover;
+        }
+        
+        @media (min-width: 769px) {
+            #video-player {
+                width: 100vw;
+                object-fit: contain;
+                object-position: 0% 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #video-player {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+        
+        /* Navigation Overlay */
+        .nav-overlay {
+            position: absolute;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 200;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        /* On desktop/tablet: Buttons are top-right */
+        @media (min-width: 769px) {
+            .nav-overlay {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                right: 1.5rem;
+            }
+        }
+        
+        /* On mobile: Buttons are bottom-right */
+        @media (max-width: 768px) {
+            .nav-overlay {
+                bottom: calc(1rem + env(safe-area-inset-bottom));
+                right: 1rem;
+            }
+        }
+        
+        .nav-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* General Button Styling */
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 0.4rem;
+            border: 0px solid black;
+            background-color: rgba(187, 187, 187, 0.641);
+            text-decoration: none;
+            transition: background-color 0.3s ease, border-radius 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .button:hover {
+            background-color: #000;
+            border-color: #fff;
+        }
+        
+        /* Shared SVG Styling */
+        .button img {
+            max-width: 50%;
+            max-height: 50%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+            filter: invert(0);
+            transition: filter 0.3s ease;
+        }
+        
+        .button:hover img {
+            filter: invert(1);
+        }
+        
+        /* Close Icon */
+        .close-icon {
+            position: absolute;
+        }
+        
+        /* On desktop/tablet: Close button is top-right */
+        @media (min-width: 769px) {
+            .close-icon {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                right: 1.5rem;
+            }
+        }
+        
+        /* On mobile: Close button is bottom-right */
+        @media (max-width: 768px) {
+            .close-icon {
+                bottom: calc(1rem + env(safe-area-inset-bottom));
+                right: 1rem;
+            }
+        }
+        
+        /* Modal Styles */
+        .info-modal {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            background-color: rgba(230, 230, 230, 0.8);
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .info-modal.visible {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Modal Content */
+        .info-modal .content {
+            max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
+            overflow-y: auto;
+            padding: 1.5rem;
+            font-family: 'bb-modern-semi-condensed', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            line-height: 1;
+            color: #000;
+            text-align: left;
+            width: 90vw;
+        }
+        
+        .info-modal .content a {
+            color: #000;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .info-modal .content a:hover {
+            opacity: 0.5;
+        }
+        </style>
 </head>
 <body>
       <!-- Video Container -->
@@ -279,7 +261,7 @@ body, html {
         <div class="content">
             <p>
                 Not really a studio. No business plan. 
-                Just a place to channel an unconventional mix of techniques and interests. 
+                Just a place to channel an unconventional mix of skills and interests. 
                 To make things for myself. 
                 A creative plugin for agencies and clients. 
                 Worlds built from thin air. Ideas. Advertising. CGI. 

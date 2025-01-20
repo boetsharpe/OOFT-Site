@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOFT</title>
+<!-- Metadata for SEO -->
+<meta name="description" content="Not really a studio. No business plan. Just me in the spare bedroom making stuff.">
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- Open Graph Metadata (for social sharing) -->
+<meta property="og:title" content="OOFT Studio">
+<meta property="og:description" content="Not really a studio. No business plan. Just me in the spare bedroom making stuff.">
+<meta property="og:image" content="/ooft_pro.jpg">
+<meta property="og:url" content="https://www.oofstudio.com">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card Metadata -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OOFT Studio">
+<meta name="twitter:description" content="Not really a studio. No business plan. Just me in the spare bedroom making stuff.">
+<meta name="twitter:image" content="/ooft_pro.jpg">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://www.oofstudio.com">
+
+    <!-- Preload Fonts -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOFT</title>
+<!-- Metadata for SEO -->
+<meta name="description" content="Not really a studio. No business plan. Just me in the spare bedroom making stuff.">
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- Open Graph Metadata (for social sharing) -->
+<meta property="og:title" content="OOFT Studio">
+<meta property="og:description" content="Not really a studio. No business plan. Just me in the spare bedroom making stuff.">
+<meta property="og:image" content="/ooft_pro.jpg">
+<meta property="og:url" content="https://www.oofstudio.com">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card Metadata -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OOFT Studio">
+<meta name="twitter:description" content="Not really a studio. No business plan. Just me in the spare bedroom making stuff.">
+<meta name="twitter:image" content="/ooft_pro.jpg">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://www.oofstudio.com">
+
+    <!-- Preload Fonts -->
+    <style>
+        /* Font Face */
+        @font-face {
+            font-family: 'bb-modern-semi-condensed';
+            src: url('bb-modern-semi-condensed.woff2') format('woff2'),
+                 url('bb-modern-semi-condensed.woff') format('woff'),
+                 url('bb-modern-semi-condensed.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        /* Global Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #E6E6E6;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            cursor: default;
+        }
+        
+        /* Video Container */
+        #video-container {
+            width: 100vw;
+            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            overflow: hidden;
+            position: relative;
+            padding-top: env(safe-area-inset-top); /* Ensure video doesn't get hidden under the top bar */
+            padding-bottom: env(safe-area-inset-bottom); /* Prevent overlap with bottom UI */
+        }
+        
+        .fullscreen-height {
+            height: 100vh; /* Fallback for browsers that support 100vh correctly */
+        }
+        
+        #video-player {
+            width: 100%;
+            height: auto;
+            min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            object-fit: cover;
+        }
+        
+        @media (min-width: 769px) {
+            #video-player {
+                width: 100vw;
+                object-fit: contain;
+                object-position: 0% 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #video-player {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+        
+        /* Navigation Overlay */
+        .nav-overlay {
+            position: absolute;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 200;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        /* On desktop/tablet: Buttons are top-right */
+        @media (min-width: 769px) {
+            .nav-overlay {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                right: 1.5rem;
+            }
+        }
+        
+        /* On mobile: Buttons are bottom-right */
+        @media (max-width: 768px) {
+            .nav-overlay {
+                bottom: calc(1rem + env(safe-area-inset-bottom));
+                right: 1rem;
+            }
+        }
+        
+        .nav-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* General Button Styling */
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 0.4rem;
+            border: 0px solid black;
+            background-color: rgba(187, 187, 187, 0.641);
+            text-decoration: none;
+            transition: background-color 0.3s ease, border-radius 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .button:hover {
+            background-color: #000;
+            border-color: #fff;
+        }
+        
+        /* Shared SVG Styling */
+        .button img {
+            max-width: 50%;
+            max-height: 50%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+            filter: invert(0);
+            transition: filter 0.3s ease;
+        }
+        
+        .button:hover img {
+            filter: invert(1);
+        }
+        
+        /* Close Icon */
+        .close-icon {
+            position: absolute;
+        }
+        
+        /* On desktop/tablet: Close button is top-right */
+        @media (min-width: 769px) {
+            .close-icon {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                right: 1.5rem;
+            }
+        }
+        
+        /* On mobile: Close button is bottom-right */
+        @media (max-width: 768px) {
+            .close-icon {
+                bottom: calc(1rem + env(safe-area-inset-bottom));
+                right: 1rem;
+            }
+        }
+        
+        /* Modal Styles */
+        .info-modal {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            background-color: rgba(230, 230, 230, 0.8);
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .info-modal.visible {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Modal Content */
+        .info-modal .content {
+            max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
+            overflow-y: auto;
+            padding: 1.5rem;
+            font-family: 'bb-modern-semi-condensed', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            line-height: 1;
+            color: #000;
+            text-align: left;
+            width: 90vw;
+        }
+        
+        .info-modal .content a {
+            color: #000;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .info-modal .content a:hover {
+            opacity: 0.5;
+        }
+        </style>
+</head>
+<body>
+      <!-- Video Container -->
+      <div id="video-container" class="fullscreen-height">
+        <video id="video-player" muted autoplay playsinline preload="auto"></video>
+    </div>
+
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay visible">
+        <!-- Mute/Unmute Button -->
+        <div class="link-block button" id="muteToggle">
+            <img id="muteIcon" src="svg/unmute.svg" alt="Mute/Unmute">
+        </div>
+        <!-- Reload Button -->
+        <div class="link-block button" id="reloadIcon">
+            <img src="svg/reload.svg" alt="Reload">
+        </div>
+        <!-- Info Button -->
+        <div class="link-block button" id="infoToggle">
+            <img id="infoIcon" src="svg/info.svg" alt="Info">
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="info-modal">
+        <div class="close-icon button" id="closeIcon">
+            <img src="svg/close.svg" alt="Close Modal">
+        </div>
+        <div class="content">
+            <p>
+                Not really a studio. No business plan. 
+                Just a place to channel an unconventional mix of skills and interests. 
+                To make things for myself. 
+                A creative plugin for agencies and clients. 
+                Worlds built from thin air. Ideas. Advertising. CGI. 
+                Graphic design. Art. Digital things. Physical things. All the things.
+            </p>
+            <br>
+            <div>
+                INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
+                EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
+                HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+            </div>
+        </div>
+    </div>
+
+    <link rel="preload" href="svg/mute.svg" as="image">
+    <link rel="preload" href="svg/unmute.svg" as="image">
+    <link rel="preload" href="svg/reload.svg" as="image">
+    <link rel="preload" href="svg/info.svg" as="image">
+    <link rel="preload" href="svg/close.svg" as="image">
+    <link rel="preload" href="svg/down.svg" as="image">
+
+    <script>
+        const adjustFullHeight = () => {
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.style.height = `${window.innerHeight}px`;
+        };
+    
+        // Adjust height on load and resize
+        window.addEventListener('DOMContentLoaded', adjustFullHeight);
+        window.addEventListener('resize', adjustFullHeight);
+    </script>
+    <script>
+      // Updated Arrays of 1440x1440 video links and corresponding poster images
+const videoLinks = [
+"https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/01.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/02.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/03.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/04.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/05.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/06.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/07.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/08.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/09.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/10.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/11.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/12.mp4"
+];
+
+const imageLinks = [
+"https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/01.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/02.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/03.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/04.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/05.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/06.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/07.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/08.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/09.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/10.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/11.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/12.jpg"
+];
+    
+        const mobileVideoLinks = [
+        "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/01.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/02.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/03.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/04.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/05.mp4",
+        ];
+    
+        const mobileImageLinks = [
+        "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/01.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/02.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/03.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/04.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/05.jpg",
+        ];
+
+        let lastPlayedIndex = null; // To track the last played video's index
+
+// Utility function to get the next video index
+const getNextIndex = (arrayLength) => {
+    let nextIndex;
+    do {
+        nextIndex = Math.floor(Math.random() * arrayLength);
+    } while (nextIndex === lastPlayedIndex); // Ensure it's not the same as the last played index
+    return nextIndex;
+};
+
+// Initialize video function
+const initializeVideo = () => {
+    const videoPlayer = document.getElementById('video-player');
+    const isMobile = window.innerWidth <= 768;
+    const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+    const imageArray = isMobile ? mobileImageLinks : imageLinks;
+
+    // Get a new random index
+    const randomIndex = getNextIndex(videoArray.length);
+    lastPlayedIndex = randomIndex; // Update the last played index
+
+    // Set the video and poster
+    videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[randomIndex];
+
+    // Ensure poster is shown while loading
+    videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.addEventListener('loadeddata', () => {
+        // Remove poster background once video is ready
+        videoPlayer.style.backgroundImage = "none";
+
+        // Attempt to play the video
+        videoPlayer.play().catch((error) => {
+            console.warn("Autoplay blocked. User interaction may be required:", error);
+            // If autoplay fails, try again when the user interacts
+            videoPlayer.addEventListener('click', () => {
+                videoPlayer.play().catch((error) =>
+                    console.error("Error playing video:", error)
+                );
+            });
+        });
+    });
+
+    videoPlayer.addEventListener('ended', () => playNextVideo(videoPlayer));
+};
+
+// Play next video function
+const playNextVideo = (videoPlayer) => {
+    const isMobile = window.innerWidth <= 768;
+    const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+    const imageArray = isMobile ? mobileImageLinks : imageLinks;
+
+    // Get a new random index
+    const nextIndex = getNextIndex(videoArray.length);
+    lastPlayedIndex = nextIndex; // Update the last played index
+
+    // Set the video and poster
+    videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[nextIndex];
+
+    // Show poster as background during transition
+    videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.load();
+
+    videoPlayer.addEventListener('loadeddata', () => {
+        videoPlayer.style.backgroundImage = "none";
+        videoPlayer.play().catch((error) =>
+            console.warn("Error playing next video:", error)
+        );
+    });
+};
+
+// Setup controls and interactions
+const setupControls = () => {
+    const videoPlayer = document.getElementById('video-player');
+    const muteToggle = document.getElementById('muteToggle');
+    const muteIcon = document.getElementById('muteIcon');
+    const reloadIcon = document.getElementById('reloadIcon');
+    const infoToggle = document.getElementById('infoToggle');
+    const infoModal = document.getElementById('infoModal');
+    const closeIcon = document.getElementById('closeIcon');
+
+    let wasMutedBeforeModal = videoPlayer.muted; // Track the initial mute state
+
+    // Load Mute State
+    const savedMuteState = localStorage.getItem('isMuted') === 'true';
+    videoPlayer.muted = savedMuteState;
+    muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
+
+    // Mute/Unmute Button
+    muteToggle.addEventListener('click', () => {
+        videoPlayer.muted = !videoPlayer.muted;
+        muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg";
+        localStorage.setItem('isMuted', videoPlayer.muted);
+    });
+
+    // Reload Button
+    reloadIcon.addEventListener('click', () => {
+        initializeVideo(); // Reload a new video
+        videoPlayer.currentTime = 0; // Reset video to start
+        document.querySelector('.nav-overlay').classList.add('visible'); // Ensure controls are visible
+        if (infoModal.classList.contains('visible')) {
+            infoModal.classList.remove('visible');
+            setTimeout(() => (infoModal.style.display = 'none'), 300);
+        }
+    });
+
+    // Modal Open/Close
+    const toggleModal = (isVisible) => {
+        if (isVisible) {
+            wasMutedBeforeModal = videoPlayer.muted;
+            videoPlayer.muted = true; // Mute the video when the modal opens
+            document.querySelector('.nav-overlay').classList.remove('visible'); // Hide the navigation overlay
+            infoModal.style.display = 'flex'; // Make modal visible before transition
+            setTimeout(() => infoModal.classList.add('visible'), 10); // Add delay for fade-in
+        } else {
+            if (!wasMutedBeforeModal) {
+                videoPlayer.muted = false;
+            }
+            document.querySelector('.nav-overlay').classList.add('visible'); // Show the navigation overlay
+            infoModal.classList.remove('visible'); // Start fade-out
+            setTimeout(() => {
+                infoModal.style.display = 'none'; // Ensure modal is hidden after fade-out
+            }, 300); // Match this timeout to the CSS `transition` duration (0.3s)
+        }
+    };
+
+    infoToggle.addEventListener('click', () => toggleModal(true));
+    closeIcon.addEventListener('click', () => toggleModal(false));
+};
+
+// Throttled Resize Handler
+let lastExecutionTime = 0;
+const throttleInterval = 50;
+
+window.addEventListener('resize', () => {
+    const currentTime = Date.now();
+
+    if (currentTime - lastExecutionTime > throttleInterval) {
+        lastExecutionTime = currentTime;
+        initializeVideo();
+    }
+});
+
+// Ensure video starts playing on initial load
+document.addEventListener('DOMContentLoaded', () => {
+    initializeVideo();
+    setupControls();
+
+    // Make sure controls are visible after everything is set up
+    document.querySelector('.nav-overlay').classList.add('visible');
+
+    // If the video doesn't play, try muting and playing again
+    const videoPlayer = document.getElementById('video-player');
+    videoPlayer.play().catch(() => {
+        // If play() fails, try muting then playing again
+        videoPlayer.muted = true;
+        videoPlayer.play().catch((error) => {
+            console.warn("Autoplay still blocked. User interaction required:", error);
+        });
+    });
+});
+    </script>
+</body>
+</html>
+</head>
+<body>
+      <!-- Video Container -->
+      <div id="video-container" class="fullscreen-height">
+        <video id="video-player" muted autoplay playsinline preload="auto"></video>
+    </div>
+
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay visible">
+        <!-- Mute/Unmute Button -->
+        <div class="link-block button" id="muteToggle">
+            <img id="muteIcon" src="svg/unmute.svg" alt="Mute/Unmute">
+        </div>
+        <!-- Reload Button -->
+        <div class="link-block button" id="reloadIcon">
+            <img src="svg/reload.svg" alt="Reload">
+        </div>
+        <!-- Info Button -->
+        <div class="link-block button" id="infoToggle">
+            <img id="infoIcon" src="svg/info.svg" alt="Info">
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="info-modal">
+        <div class="close-icon button" id="closeIcon">
+            <img src="svg/close.svg" alt="Close Modal">
+        </div>
+        <div class="content">
+            <p>
+                Not really a studio. No business plan. 
+                Just a place to channel an unconventional mix of skills and interests. 
+                To make things for myself. 
+                A creative plugin for agencies and clients. 
+                Worlds built from thin air. Ideas. Advertising. CGI. 
+                Graphic design. Art. Digital things. Physical things. All the things.
+            </p>
+            <br>
+            <div>
+                INSTA: <a href="https://www.instagram.com/ooft.studio/" target="_blank">@ooft.studio</a><br>
+                EMAIL: <a href="mailto:boets@me.com">hi@ooft.studio</a><br>
+                HISTORY: <a href="https://www.leslie.work" target="_blank">leslie.work</a>
+            </div>
+        </div>
+    </div>
+
+    <link rel="preload" href="svg/mute.svg" as="image">
+    <link rel="preload" href="svg/unmute.svg" as="image">
+    <link rel="preload" href="svg/reload.svg" as="image">
+    <link rel="preload" href="svg/info.svg" as="image">
+    <link rel="preload" href="svg/close.svg" as="image">
+    <link rel="preload" href="svg/down.svg" as="image">
+
+    <script>
+        const adjustFullHeight = () => {
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.style.height = `${window.innerHeight}px`;
+        };
+    
+        // Adjust height on load and resize
+        window.addEventListener('DOMContentLoaded', adjustFullHeight);
+        window.addEventListener('resize', adjustFullHeight);
+    </script>
+    <script>
+      // Updated Arrays of 1440x1440 video links and corresponding poster images
+const videoLinks = [
+"https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/01.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/02.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/03.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/04.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/05.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/06.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/07.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/08.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/09.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/10.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/11.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/12.mp4"
+];
+
+const imageLinks = [
+"https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/01.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/02.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/03.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/04.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/05.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/06.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/07.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/08.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/09.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/10.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/11.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1440x1440/frames/12.jpg"
+];
+    
+        const mobileVideoLinks = [
+        "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/01.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/02.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/03.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/04.mp4",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/05.mp4",
+        ];
+    
+        const mobileImageLinks = [
+        "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/01.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/02.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/03.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/04.jpg",
+    "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/05.jpg",
+        ];
+
+        let lastPlayedIndex = null; // To track the last played video's index
+
+// Utility function to get the next video index
+const getNextIndex = (arrayLength) => {
+    let nextIndex;
+    do {
+        nextIndex = Math.floor(Math.random() * arrayLength);
+    } while (nextIndex === lastPlayedIndex); // Ensure it's not the same as the last played index
+    return nextIndex;
+};
+
+// Initialize video function
+const initializeVideo = () => {
+    const videoPlayer = document.getElementById('video-player');
+    const isMobile = window.innerWidth <= 768;
+    const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+    const imageArray = isMobile ? mobileImageLinks : imageLinks;
+
+    // Get a new random index
+    const randomIndex = getNextIndex(videoArray.length);
+    lastPlayedIndex = randomIndex; // Update the last played index
+
+    // Set the video and poster
+    videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[randomIndex];
+
+    // Ensure poster is shown while loading
+    videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.addEventListener('loadeddata', () => {
+        // Remove poster background once video is ready
+        videoPlayer.style.backgroundImage = "none";
+
+        // Attempt to play the video
+        videoPlayer.play().catch((error) => {
+            console.warn("Autoplay blocked. User interaction may be required:", error);
+            // If autoplay fails, try again when the user interacts
+            videoPlayer.addEventListener('click', () => {
+                videoPlayer.play().catch((error) =>
+                    console.error("Error playing video:", error)
+                );
+            });
+        });
+    });
+
+    videoPlayer.addEventListener('ended', () => playNextVideo(videoPlayer));
+};
+
+// Play next video function
+const playNextVideo = (videoPlayer) => {
+    const isMobile = window.innerWidth <= 768;
+    const videoArray = isMobile ? mobileVideoLinks : videoLinks;
+    const imageArray = isMobile ? mobileImageLinks : imageLinks;
+
+    // Get a new random index
+    const nextIndex = getNextIndex(videoArray.length);
+    lastPlayedIndex = nextIndex; // Update the last played index
+
+    // Set the video and poster
+    videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[nextIndex];
+
+    // Show poster as background during transition
+    videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.load();
+
+    videoPlayer.addEventListener('loadeddata', () => {
+        videoPlayer.style.backgroundImage = "none";
+        videoPlayer.play().catch((error) =>
+            console.warn("Error playing next video:", error)
+        );
+    });
+};
+
+// Setup controls and interactions
+const setupControls = () => {
+    const videoPlayer = document.getElementById('video-player');
+    const muteToggle = document.getElementById('muteToggle');
+    const muteIcon = document.getElementById('muteIcon');
+    const reloadIcon = document.getElementById('reloadIcon');
+    const infoToggle = document.getElementById('infoToggle');
+    const infoModal = document.getElementById('infoModal');
+    const closeIcon = document.getElementById('closeIcon');
+
+    let wasMutedBeforeModal = videoPlayer.muted; // Track the initial mute state
+
+    // Load Mute State
+    const savedMuteState = localStorage.getItem('isMuted') === 'true';
+    videoPlayer.muted = savedMuteState;
+    muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
+
+    // Mute/Unmute Button
+    muteToggle.addEventListener('click', () => {
+        videoPlayer.muted = !videoPlayer.muted;
+        muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg";
+        localStorage.setItem('isMuted', videoPlayer.muted);
+    });
+
+    // Reload Button
+    reloadIcon.addEventListener('click', () => {
+        initializeVideo(); // Reload a new video
+        videoPlayer.currentTime = 0; // Reset video to start
+        document.querySelector('.nav-overlay').classList.add('visible'); // Ensure controls are visible
+        if (infoModal.classList.contains('visible')) {
+            infoModal.classList.remove('visible');
+            setTimeout(() => (infoModal.style.display = 'none'), 300);
+        }
+    });
+
+    // Modal Open/Close
+    const toggleModal = (isVisible) => {
+        if (isVisible) {
+            wasMutedBeforeModal = videoPlayer.muted;
+            videoPlayer.muted = true; // Mute the video when the modal opens
+            document.querySelector('.nav-overlay').classList.remove('visible'); // Hide the navigation overlay
+            infoModal.style.display = 'flex'; // Make modal visible before transition
+            setTimeout(() => infoModal.classList.add('visible'), 10); // Add delay for fade-in
+        } else {
+            if (!wasMutedBeforeModal) {
+                videoPlayer.muted = false;
+            }
+            document.querySelector('.nav-overlay').classList.add('visible'); // Show the navigation overlay
+            infoModal.classList.remove('visible'); // Start fade-out
+            setTimeout(() => {
+                infoModal.style.display = 'none'; // Ensure modal is hidden after fade-out
+            }, 300); // Match this timeout to the CSS `transition` duration (0.3s)
+        }
+    };
+
+    infoToggle.addEventListener('click', () => toggleModal(true));
+    closeIcon.addEventListener('click', () => toggleModal(false));
+};
+
+// Throttled Resize Handler
+let lastExecutionTime = 0;
+const throttleInterval = 50;
+
+window.addEventListener('resize', () => {
+    const currentTime = Date.now();
+
+    if (currentTime - lastExecutionTime > throttleInterval) {
+        lastExecutionTime = currentTime;
+        initializeVideo();
+    }
+});
+
+// Ensure video starts playing on initial load
+document.addEventListener('DOMContentLoaded', () => {
+    initializeVideo();
+    setupControls();
+
+    // Make sure controls are visible after everything is set up
+    document.querySelector('.nav-overlay').classList.add('visible');
+
+    // If the video doesn't play, try muting and playing again
+    const videoPlayer = document.getElementById('video-player');
+    videoPlayer.play().catch(() => {
+        // If play() fails, try muting then playing again
+        videoPlayer.muted = true;
+        videoPlayer.play().catch((error) => {
+            console.warn("Autoplay still blocked. User interaction required:", error);
+        });
+    });
+});
+    </script>
+</body>
+</html>

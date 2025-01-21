@@ -123,7 +123,7 @@ video {
         width: 100%; /* Let the height take priority for aspect ratio */
         height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* Respect dynamic UI elements */
         object-fit: contain; /* Ensure the video is fully visible */
-        object-position: left; /* Centers the video/placeholder */
+        object-position: top left; /* Pin to the top-left corner */
     }
 
     /* Mobile Video Container */
@@ -425,34 +425,31 @@ const initializeVideo = () => {
 
         // Select the appropriate player and load the video
         const videoPlayer = isMobile ? videoPlayerMobile : videoPlayerDesktop;
-const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
-const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
+        const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
 
-const randomIndex = Math.floor(Math.random() * videoArray.length);
+        const randomIndex = Math.floor(Math.random() * videoArray.length);
 
-videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
-videoPlayer.poster = imageArray[randomIndex];
-videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+        videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+        videoPlayer.preload = "auto"; // Preload videos
 
-// Apply different styles based on whether it's mobile or desktop
-if (isMobile) {
-    videoPlayer.style.backgroundSize = "contain"; // Match mobile-specific styling
-    videoPlayer.style.backgroundPosition = "left"; // Align to the left
-    videoPlayer.style.objectFit = "contain"; // Ensure full visibility of the placeholder
-    videoPlayer.style.objectPosition = "left"; // Align video to the left
-} else {
-    videoPlayer.style.backgroundSize = "cover"; // Match desktop-specific styling
-    videoPlayer.style.backgroundPosition = "center"; // Center the placeholder
-    videoPlayer.style.objectFit = "cover"; // Allow cropping to fill the container
-    videoPlayer.style.objectPosition = "center"; // Center the video
-}
+        if (!isMobile) {
+            // Only set posters on desktop
+            const imageArray = desktopImageLinks;
+            videoPlayer.poster = imageArray[randomIndex];
+            videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+            videoPlayer.style.backgroundSize = "cover";
+            videoPlayer.style.backgroundPosition = "center";
+        }
+
         // Reset audio to the default muted state when switching breakpoints
         videoPlayer.muted = true;
         updateMuteIcon(true);
 
         // Add event listeners for playback
         videoPlayer.addEventListener("loadeddata", () => {
-            videoPlayer.style.backgroundImage = "none";
+            if (!isMobile) {
+                videoPlayer.style.backgroundImage = "none"; // Remove poster background on play
+            }
             videoPlayer.play().catch((error) => {
                 console.error("Autoplay failed:", error);
             });
@@ -470,10 +467,15 @@ const playNextVideo = (videoPlayer, isMobile) => {
     const nextIndex = Math.floor(Math.random() * videoArray.length);
 
     videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
-    videoPlayer.poster = imageArray[nextIndex];
-    videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
-    videoPlayer.style.backgroundSize = "cover";
-    videoPlayer.style.backgroundPosition = "center";
+    videoPlayer.preload = "auto"; // Preload next video
+
+    if (!isMobile) {
+        // Only set posters on desktop
+        videoPlayer.poster = imageArray[nextIndex];
+        videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
+        videoPlayer.style.backgroundSize = "cover";
+        videoPlayer.style.backgroundPosition = "center";
+    }
 
     videoPlayer.load();
     videoPlayer.play().catch((error) => {
@@ -508,35 +510,38 @@ const setupControls = () => {
         updateMuteIcon(!isCurrentlyMuted); // Update the mute icon
     });
 
-   // Reload button
-reloadIcon.addEventListener("click", () => {
-    const videoPlayer = getCurrentVideoPlayer(); // Get the active video player
-    const currentMuteState = videoPlayer.muted; // Save the current mute state
+    // Reload button
+    reloadIcon.addEventListener("click", () => {
+        const videoPlayer = getCurrentVideoPlayer(); // Get the active video player
+        const currentMuteState = videoPlayer.muted; // Save the current mute state
 
-    // Select the appropriate player and reload the video
-    const isMobile = window.innerWidth <= 768;
-    const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
-    const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
+        // Select the appropriate player and reload the video
+        const isMobile = window.innerWidth <= 768;
+        const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
+        const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
 
-    const randomIndex = Math.floor(Math.random() * videoArray.length);
+        const randomIndex = Math.floor(Math.random() * videoArray.length);
 
-    videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
-    videoPlayer.poster = imageArray[randomIndex];
-    videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
-    videoPlayer.style.backgroundSize = "cover";
-    videoPlayer.style.backgroundPosition = "center";
+        videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+        videoPlayer.preload = "auto"; // Preload videos
 
-    videoPlayer.load();
-    videoPlayer.muted = currentMuteState; // Restore the mute state
-    updateMuteIcon(currentMuteState); // Update the mute icon
+        if (!isMobile) {
+            videoPlayer.poster = imageArray[randomIndex];
+            videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+            videoPlayer.style.backgroundSize = "cover";
+            videoPlayer.style.backgroundPosition = "center";
+        }
 
-    videoPlayer.play().catch((error) => {
-        console.error("Video playback failed:", error);
+        videoPlayer.load();
+        videoPlayer.muted = currentMuteState; // Restore the mute state
+        updateMuteIcon(currentMuteState); // Update the mute icon
+
+        videoPlayer.play().catch((error) => {
+            console.error("Video playback failed:", error);
+        });
+
+        reloadIcon.blur(); // Remove focus/active state
     });
-
-    // Remove focus/active state
-    reloadIcon.blur();
-});
 
     // Info modal toggle
     infoToggle.addEventListener("click", () => {

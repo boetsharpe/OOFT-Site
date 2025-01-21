@@ -60,7 +60,23 @@ p {
     margin-inline-end: 0px;
     unicode-bidi: isolate;
 }
-
+/* Preloader Styles */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #E6E6E6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'bb-modern-semi-condensed', sans-serif;
+    font-size: 2rem;
+    color: #000;
+    z-index: 9999;
+    pointer-events: none;
+}
 /* General Video Container Styles */
 .fullscreen-height {
     height: 100vh;
@@ -107,7 +123,7 @@ video {
         width: 100%; /* Let the height take priority for aspect ratio */
         height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* Respect dynamic UI elements */
         object-fit: contain; /* Ensure the video is fully visible */
-        object-position: top left; /* Pin to the top-left corner */
+        object-position: left; /* Centers the video/placeholder */
     }
 
     /* Mobile Video Container */
@@ -373,136 +389,180 @@ video {
         "https://leslies3bucket.s3.amazonaws.com/OOFT_videos/1080x1920/frames/05.jpg"
     ];
 
+
     
-        let lastPlayedIndex = null;
-    
-        // Utility function to get a new random index
-        const getNextIndex = (arrayLength) => {
-            let nextIndex;
-            do {
-                nextIndex = Math.floor(Math.random() * arrayLength);
-            } while (nextIndex === lastPlayedIndex);
-            return nextIndex;
-        };
-    
-        // Initialize video
-        const initializeVideo = () => {
-            const isMobile = window.innerWidth <= 768;
-            const videoPlayer = isMobile
-                ? document.getElementById("video-player-mobile")
-                : document.getElementById("video-player-desktop");
-            const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
-            const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
-    
-            const randomIndex = getNextIndex(videoArray.length);
-            lastPlayedIndex = randomIndex;
-    
-            videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
-            videoPlayer.poster = imageArray[randomIndex];
-    
-            videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
-            videoPlayer.style.backgroundSize = "cover";
-            videoPlayer.style.backgroundPosition = "center";
-    
-            videoPlayer.addEventListener("loadeddata", () => {
-                videoPlayer.style.backgroundImage = "none";
-                videoPlayer.play().catch(console.error);
-            });
-    
-            videoPlayer.addEventListener("ended", () => playNextVideo(videoPlayer, isMobile));
-        };
-    
-        // Play the next video
-        const playNextVideo = (videoPlayer, isMobile) => {
-            const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
-            const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
-    
-            const nextIndex = getNextIndex(videoArray.length);
-            lastPlayedIndex = nextIndex;
-    
-            videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
-            videoPlayer.poster = imageArray[nextIndex];
-    
-            videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
-            videoPlayer.style.backgroundSize = "cover";
-            videoPlayer.style.backgroundPosition = "center";
-    
-            videoPlayer.load();
-    
-            videoPlayer.addEventListener("loadeddata", () => {
-                videoPlayer.style.backgroundImage = "none";
-                videoPlayer.play().catch(console.error);
-            });
-        };
-    
-        // Event listeners for buttons
-        const setupControls = () => {
-    const muteToggle = document.getElementById("muteToggle");
+    let lastBreakpoint = null; // Track the last breakpoint for comparison
+
+// Utility function to get a new random index
+const getNextIndex = (arrayLength) => {
+    return Math.floor(Math.random() * arrayLength); // Generate a purely random index
+};
+
+// Helper function to update the mute icon
+const updateMuteIcon = (isMuted) => {
     const muteIcon = document.getElementById("muteIcon");
+    muteIcon.src = isMuted ? "svg/unmute.svg" : "svg/mute.svg";
+};
+
+// Initialize video
+const initializeVideo = () => {
+    const isMobile = window.innerWidth <= 768;
+    const videoPlayerDesktop = document.getElementById("video-player-desktop");
+    const videoPlayerMobile = document.getElementById("video-player-mobile");
+
+    // Determine the current breakpoint
+    const currentBreakpoint = isMobile ? "mobile" : "desktop";
+
+    // Check if the breakpoint has changed
+    if (currentBreakpoint !== lastBreakpoint) {
+        lastBreakpoint = currentBreakpoint;
+
+        // Pause and clear both players to prevent overlapping audio
+        videoPlayerDesktop.pause();
+        videoPlayerDesktop.src = "";
+        videoPlayerMobile.pause();
+        videoPlayerMobile.src = "";
+
+        // Select the appropriate player and load the video
+        const videoPlayer = isMobile ? videoPlayerMobile : videoPlayerDesktop;
+const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
+const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
+
+const randomIndex = Math.floor(Math.random() * videoArray.length);
+
+videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+videoPlayer.poster = imageArray[randomIndex];
+videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+
+// Apply different styles based on whether it's mobile or desktop
+if (isMobile) {
+    videoPlayer.style.backgroundSize = "contain"; // Match mobile-specific styling
+    videoPlayer.style.backgroundPosition = "left"; // Align to the left
+    videoPlayer.style.objectFit = "contain"; // Ensure full visibility of the placeholder
+    videoPlayer.style.objectPosition = "left"; // Align video to the left
+} else {
+    videoPlayer.style.backgroundSize = "cover"; // Match desktop-specific styling
+    videoPlayer.style.backgroundPosition = "center"; // Center the placeholder
+    videoPlayer.style.objectFit = "cover"; // Allow cropping to fill the container
+    videoPlayer.style.objectPosition = "center"; // Center the video
+}
+        // Reset audio to the default muted state when switching breakpoints
+        videoPlayer.muted = true;
+        updateMuteIcon(true);
+
+        // Add event listeners for playback
+        videoPlayer.addEventListener("loadeddata", () => {
+            videoPlayer.style.backgroundImage = "none";
+            videoPlayer.play().catch((error) => {
+                console.error("Autoplay failed:", error);
+            });
+        });
+
+        videoPlayer.addEventListener("ended", () => playNextVideo(videoPlayer, isMobile));
+    }
+};
+
+// Play the next video
+const playNextVideo = (videoPlayer, isMobile) => {
+    const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
+    const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
+
+    const nextIndex = Math.floor(Math.random() * videoArray.length);
+
+    videoPlayer.src = videoArray[nextIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[nextIndex];
+    videoPlayer.style.backgroundImage = `url(${imageArray[nextIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.load();
+    videoPlayer.play().catch((error) => {
+        console.error("Next video autoplay failed:", error);
+    });
+};
+
+// Event listeners for buttons
+const setupControls = () => {
+    const muteToggle = document.getElementById("muteToggle");
     const reloadIcon = document.getElementById("reloadIcon");
     const infoToggle = document.getElementById("infoToggle");
     const infoModal = document.getElementById("infoModal");
     const closeIcon = document.getElementById("closeIcon");
     const navOverlay = document.querySelector(".nav-overlay");
 
-    const isMobile = window.innerWidth <= 768;
-    const videoPlayer = isMobile
-        ? document.getElementById("video-player-mobile")
-        : document.getElementById("video-player-desktop");
+    const getCurrentVideoPlayer = () => {
+        const isMobile = window.innerWidth <= 768;
+        return isMobile
+            ? document.getElementById("video-player-mobile")
+            : document.getElementById("video-player-desktop");
+    };
 
-    // Load mute state from localStorage
-    const savedMuteState = localStorage.getItem("isMuted") === "true";
-    videoPlayer.muted = savedMuteState;
-    muteIcon.src = savedMuteState ? "svg/unmute.svg" : "svg/mute.svg";
-
-    // Track previous mute state for modal behavior
-    let wasMutedBeforeModal = videoPlayer.muted;
+    // Track the mute state before opening the modal
+    let wasMutedBeforeModal = null;
 
     // Mute/Unmute button
     muteToggle.addEventListener("click", () => {
-        videoPlayer.muted = !videoPlayer.muted;
-        muteIcon.src = videoPlayer.muted ? "svg/unmute.svg" : "svg/mute.svg";
-        localStorage.setItem("isMuted", videoPlayer.muted);
+        const videoPlayer = getCurrentVideoPlayer();
+        const isCurrentlyMuted = videoPlayer.muted;
+        videoPlayer.muted = !isCurrentlyMuted;
+        updateMuteIcon(!isCurrentlyMuted); // Update the mute icon
     });
 
-    // Reload button
-    reloadIcon.addEventListener("click", () => {
-        initializeVideo();
-        videoPlayer.currentTime = 0;
+   // Reload button
+reloadIcon.addEventListener("click", () => {
+    const videoPlayer = getCurrentVideoPlayer(); // Get the active video player
+    const currentMuteState = videoPlayer.muted; // Save the current mute state
 
-        // Remove focus/active state
-        reloadIcon.blur();
+    // Select the appropriate player and reload the video
+    const isMobile = window.innerWidth <= 768;
+    const videoArray = isMobile ? mobileVideoLinks : desktopVideoLinks;
+    const imageArray = isMobile ? mobileImageLinks : desktopImageLinks;
+
+    const randomIndex = Math.floor(Math.random() * videoArray.length);
+
+    videoPlayer.src = videoArray[randomIndex] + "?v=" + Date.now();
+    videoPlayer.poster = imageArray[randomIndex];
+    videoPlayer.style.backgroundImage = `url(${imageArray[randomIndex]})`;
+    videoPlayer.style.backgroundSize = "cover";
+    videoPlayer.style.backgroundPosition = "center";
+
+    videoPlayer.load();
+    videoPlayer.muted = currentMuteState; // Restore the mute state
+    updateMuteIcon(currentMuteState); // Update the mute icon
+
+    videoPlayer.play().catch((error) => {
+        console.error("Video playback failed:", error);
     });
+
+    // Remove focus/active state
+    reloadIcon.blur();
+});
 
     // Info modal toggle
     infoToggle.addEventListener("click", () => {
-        // Save current mute state
-        wasMutedBeforeModal = videoPlayer.muted;
-
-        // Mute the video
-        videoPlayer.muted = true;
-
-        // Show modal
+        const videoPlayer = getCurrentVideoPlayer();
+        wasMutedBeforeModal = videoPlayer.muted; // Save current mute state
+        videoPlayer.muted = true; // Mute video when modal opens
         infoModal.style.display = "flex";
-        navOverlay.classList.remove("visible"); // Hide the nav overlay
+        navOverlay.classList.remove("visible"); // Hide nav overlay
         setTimeout(() => infoModal.classList.add("visible"), 10);
     });
 
     // Close modal
     closeIcon.addEventListener("click", () => {
-        // Restore the previous mute state
-        videoPlayer.muted = wasMutedBeforeModal;
-
-        // Hide modal
+        const videoPlayer = getCurrentVideoPlayer();
+        if (wasMutedBeforeModal === false) {
+            videoPlayer.muted = false; // Restore previous mute state only if unmuted
+        }
         infoModal.classList.remove("visible");
         setTimeout(() => {
             infoModal.style.display = "none";
-            navOverlay.classList.add("visible"); // Show the nav overlay
+            navOverlay.classList.add("visible"); // Show nav overlay
         }, 300);
     });
 };
-    
-      // Throttle function
+
+// Throttle function
 const throttle = (func, limit) => {
     let lastFunc;
     let lastRan;
@@ -525,12 +585,15 @@ const throttle = (func, limit) => {
 };
 
 // Adjust throttle duration to control speed (in milliseconds)
-const resizeThrottleDuration = 150; // Example: 500ms
+const resizeThrottleDuration = 150;
 
 // Resize Handler with Throttling
-window.addEventListener("resize", throttle(() => {
-    initializeVideo();
-}, resizeThrottleDuration));
+window.addEventListener(
+    "resize",
+    throttle(() => {
+        initializeVideo(); // Reinitialize video only if breakpoint changes
+    }, resizeThrottleDuration)
+);
 
 // DOMContentLoaded Event
 document.addEventListener("DOMContentLoaded", () => {

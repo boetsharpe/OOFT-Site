@@ -148,8 +148,8 @@ video {
     transition: opacity 0.3s ease, visibility 0.3s ease;
     visibility: hidden;
     opacity: 0;
-    top: calc(1rem + env(safe-area-inset-top)); /* Default position for desktop */
-    right: 1rem;
+    top: calc(1.2rem + env(safe-area-inset-top)); /* Default position for desktop */
+    right: 1.2rem;
 }
 
 /* Ensure navigation is visible */
@@ -198,8 +198,8 @@ video {
 .close-icon {
     position: absolute;
     z-index: 300; /* Ensure it appears above all elements */
-    top: calc(1rem + env(safe-area-inset-top));
-    right: 1rem;
+    top: calc(1.2rem + env(safe-area-inset-top));
+    right: 1.2rem;
     width: 2rem;
     height: 2rem;
     display: flex;
@@ -247,7 +247,7 @@ video {
 .info-modal .content {
     max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
     overflow-y: auto;
-    padding: 1.5rem;
+    padding: 1.2rem;
     font-family: 'bb-modern-semi-condensed', sans-serif;
     font-size: clamp(1.5rem, 3vw, 2.25rem);
     line-height: 1;

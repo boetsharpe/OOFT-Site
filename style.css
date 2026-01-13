@@ -1,0 +1,2228 @@
+:root {
+    /* Site-wide padding - adjust this to change all padding proportionally */
+    --site-padding: 1em;
+    
+    /* Grid System Variables - Change these to adjust both grid guide AND thumbnails */
+    --body-padding: var(--site-padding);
+    --grid-gap: 4px;
+    --grid-columns: 18;
+    
+    /* UI Theme Variables - Change these to style all buttons/controls */
+    --ui-background: rgba(0, 0, 0, 0.334);
+    --ui-background-hover: rgba(0, 0, 0, 0.95);
+    --ui-background-active: rgba(0, 0, 0, 1);
+    --ui-text-color: #ffffff;
+    --ui-border-radius: 4px;
+    --ui-blur: blur(20px);
+    --ui-height: 40px;
+    --ui-padding: 0 16px;
+    --ui-border: 1px solid transparent;
+    
+    /* Header Bar Component Variables */
+    --header-height: 40px;
+    --header-gap: 4px;
+    --header-padding: var(--site-padding);
+    --header-z-index: 1000;
+    --header-offset-top: 20px;
+    --header-offset-bottom: 20px;
+    --button-size: 40px;
+    --button-icon-size: 1.05em;
+    --button-icon-opacity: 0.7;
+    --button-icon-opacity-hover: 1;
+    --search-bar-width-desktop: calc(100vw / 3);
+    --search-bar-width-tablet: 50vw;
+    --search-text-size: 11px;
+    --search-text-weight: 300;
+    
+    /* Calculated values - don't change these */
+    --total-padding: calc(var(--body-padding) * 2);
+    --page-wrapper-padding: calc(var(--site-padding) * 2); /* site-padding on each side */
+    --total-gaps: calc((var(--grid-columns) - 1) * var(--grid-gap));
+    --available-width: calc(100vw - var(--total-padding));
+    /* Column width for grid inside page-wrapper (accounts for 2em padding on each side) */
+    --column-width: calc((100% - var(--total-gaps)) / var(--grid-columns));
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fff;
+    color: #000;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: var(--site-padding);
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+body.dark-mode {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.header {
+    margin-bottom: 0;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.stats {
+    color: #666;
+    font-size: 14px;
+}
+
+.grid-wrapper {
+    /* Wrapper for the grid - fills page-wrapper width */
+    width: 100%;
+    padding: 0;
+    padding-top: 6em;
+    margin: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+
+.grid-section {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), var(--column-width));
+    gap: var(--grid-gap);
+    grid-auto-flow: row dense; /* fill holes when item heights vary */
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: start;
+    box-sizing: border-box;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.item {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.grid-section:hover .item:hover {
+    opacity: 1;
+    animation: flash 0.3s ease-in-out 6; /* ~1.8s total, stops after ~2s */
+}
+
+.filename:hover {
+    animation: flash 0.3s ease-in-out infinite;
+}
+
+.filename {
+    font-size: 11px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    color: #000;
+    line-height: 1.2;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow-wrap: break-word;
+    word-break: normal;
+    max-height: 2.4em;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* Dark mode: filename text is white */
+body.dark-mode .filename {
+    color: #ffffff;
+}
+
+/* Special item content styling */
+.special-item-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    text-align: center;
+    color: #000;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: normal;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+}
+
+body.dark-mode .special-item-content {
+    color: #ffffff;
+}
+
+.special-item-content h2 {
+    font-size: 11px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.special-item-content p {
+    font-size: 11px;
+    font-weight: 400;
+    margin-bottom: 0;
+    margin-top: 0;
+    line-height: normal;
+}
+
+/* Info Wrapper - wraps the info section */
+.info-wrapper {
+    width: 100%;
+    height: calc(100vh - var(--site-padding) * 2);
+    max-height: calc(100vh - var(--site-padding) * 2);
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Info Section - Simple structure */
+.info-section {
+    width: 50%;
+    height: 100%;
+    max-height: 100%;
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+
+body.dark-mode .info-section {
+    background: #1e1e1e;
+}
+
+/* Info boxes */
+.box-1,
+.box-2,
+.box-3,
+.box-4 {
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.box-1 {
+    width: 75%;
+}
+
+.box-2,
+.box-3,
+.box-4 {
+    width: 33.333%;
+}
+
+/* Info page boxes - simple vertical stacking */
+.info-section .about-box,
+.info-section .services-box,
+.info-section .experience-box,
+.info-section .awards-box,
+.info-section .work-featured-box,
+.info-section .contact-box {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    color: #000;
+    padding: 0;
+    margin: 0 0 calc(11px * 2) 0;
+}
+
+/* About text line breaks - show desktop version by default */
+.info-section .about-text-desktop {
+    display: block;
+}
+
+.info-section .about-text-tablet {
+    display: none;
+}
+
+body.dark-mode .info-section .about-box,
+body.dark-mode .info-section .services-box,
+body.dark-mode .info-section .experience-box,
+body.dark-mode .info-section .awards-box,
+body.dark-mode .info-section .work-featured-box,
+body.dark-mode .info-section .contact-box {
+    color: #fff;
+}
+
+.info-section .about-box h2,
+.info-section .services-box h2,
+.info-section .experience-box h2,
+.info-section .awards-box h2,
+.info-section .work-featured-box h2,
+.info-section .contact-box h2 {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    margin-top: 0;
+    padding: 0;
+    color: #666;
+}
+
+body.dark-mode .info-section .about-box h2,
+body.dark-mode .info-section .services-box h2,
+body.dark-mode .info-section .experience-box h2,
+body.dark-mode .info-section .awards-box h2,
+body.dark-mode .info-section .work-featured-box h2,
+body.dark-mode .info-section .contact-box h2 {
+    color: #999;
+}
+
+.info-section .about-box p,
+.info-section .services-box p,
+.info-section .experience-box p,
+.info-section .awards-box p,
+.info-section .work-featured-box p,
+.info-section .contact-box p {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    line-height: normal;
+    white-space: pre-line;
+}
+
+.info-section .about-box p + p,
+.info-section .services-box p + p,
+.info-section .experience-box p + p,
+.info-section .awards-box p + p,
+.info-section .work-featured-box p + p,
+.info-section .contact-box p + p {
+    margin-top: 0;
+}
+
+.info-section .about-box a,
+.info-section .services-box a,
+.info-section .experience-box a,
+.info-section .awards-box a,
+.info-section .work-featured-box a,
+.info-section .contact-box a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.info-section .about-box a:hover,
+.info-section .services-box a:hover,
+.info-section .experience-box a:hover,
+.info-section .awards-box a:hover,
+.info-section .work-featured-box a:hover,
+.info-section .contact-box a:hover {
+    text-decoration: underline;
+}
+
+body.dark-mode .info-section .about-box a,
+body.dark-mode .info-section .services-box a,
+body.dark-mode .info-section .experience-box a,
+body.dark-mode .info-section .awards-box a,
+body.dark-mode .info-section .work-featured-box a,
+body.dark-mode .info-section .contact-box a {
+    color: inherit;
+}
+
+.info-section .about-box ul,
+.info-section .services-box ul,
+.info-section .experience-box ul,
+.info-section .awards-box ul,
+.info-section .contact-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-section .about-box li,
+.info-section .services-box li,
+.info-section .experience-box li,
+.info-section .awards-box li,
+.info-section .work-featured-box li,
+.info-section .contact-box li {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    line-height: normal;
+}
+
+.info-section .about-box li + li,
+.info-section .services-box li + li,
+.info-section .experience-box li + li,
+.info-section .awards-box li + li,
+.info-section .contact-box li + li {
+    margin-top: 0;
+}
+
+.info-section .experience-box .experience-item {
+    margin-bottom: 11px;
+    padding: 0;
+}
+
+.info-section .experience-box .experience-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-section .experience-box .experience-item h3 {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    margin-top: 0;
+    padding: 0;
+}
+
+.info-section .experience-box .experience-item p {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+    line-height: normal;
+}
+
+/* Footer text for info page */
+
+.metadata {
+    font-size: 9px;
+    color: #666;
+    margin-top: 2px;
+    font-weight: 400;
+    flex-shrink: 0;
+    min-height: 14px;
+}
+
+.thumbnail-title {
+    display: none;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+
+/* ============================================
+   HEADER BAR COMPONENT - Component-based structure
+   ============================================ */
+
+.header-bar {
+    position: fixed;
+    left: var(--header-padding);
+    right: var(--header-padding);
+    z-index: var(--header-z-index);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--header-gap);
+    background: transparent;
+}
+
+.header-bar--top {
+    top: var(--header-offset-top);
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.header-bar--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* Search Bar Component */
+.header-bar__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    z-index: calc(var(--header-z-index) + 1);
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+/* Make search bar container relative for dropdown positioning */
+.header-bar__search .search-bar {
+    position: relative;
+}
+
+.header-bar__search.header-bar--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* ooft.studio branding text */
+/* Brand SVGs - replacing the brand button */
+.brand-svgs {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: var(--button-size);
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 10000;
+    position: fixed;
+    left: var(--header-padding);
+    top: var(--header-offset-top);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Static full-width brand SVG overlay */
+.brand-svgs-static {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    position: fixed;
+    top: 0;
+    left: 1em;
+    width: calc(100vw - 2em);
+    height: 100vh;
+    pointer-events: auto;
+    z-index: 9998;
+    cursor: pointer;
+    opacity: 0;
+}
+
+/* Show cover logo immediately when brand-logo-visible is active */
+body.brand-logo-visible .brand-svgs-static:not(.dismissed) {
+    opacity: 1;
+}
+
+.brand-svg-wrapper-static {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.brand-svgs-static .brand-svg-static {
+    height: 80vh;
+    width: auto;
+    max-width: 100%;
+    display: block;
+    object-fit: contain;
+    filter: brightness(0) invert(0);
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+    transition: none;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+/* Rotate 1 and 2 SVGs clockwise */
+@keyframes rotate-clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.brand-svgs-static .brand-svg-wrapper-static:nth-child(1) .brand-svg-static,
+.brand-svgs-static .brand-svg-wrapper-static:nth-child(2) .brand-svg-static {
+    animation: rotate-clockwise 16s linear infinite;
+    will-change: transform;
+}
+
+body.dark-mode .brand-svgs-static .brand-svg-static {
+    filter: brightness(0) invert(1);
+}
+
+/* Hide website content initially, show cover first */
+/* On reload, don't hide - show instantly */
+body:not(.website-loaded):not([data-is-reload="true"]) .page-wrapper,
+body:not(.website-loaded):not([data-is-reload="true"]) .header-bar,
+body:not(.website-loaded):not([data-is-reload="true"]) .thumbnail-filmstrip,
+body:not(.website-loaded):not([data-is-reload="true"]) .size-slider {
+    opacity: 0;
+    transition: opacity 0.8s ease-in;
+}
+
+/* On reload, show instantly without transition - no hiding first */
+body[data-is-reload="true"] .page-wrapper,
+body[data-is-reload="true"] .header-bar,
+body[data-is-reload="true"] .thumbnail-filmstrip,
+body[data-is-reload="true"] .size-slider {
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+/* On first load, fade in smoothly */
+body:not([data-is-reload="true"]).website-loaded .page-wrapper,
+body:not([data-is-reload="true"]).website-loaded .header-bar,
+body:not([data-is-reload="true"]).website-loaded .thumbnail-filmstrip,
+body:not([data-is-reload="true"]).website-loaded .size-slider {
+    opacity: 1;
+    transition: opacity 0.8s ease-in;
+}
+
+/* Blur background when static logo is visible */
+body.brand-logo-visible {
+    overflow: hidden !important;
+}
+
+html.brand-logo-visible {
+    overflow: hidden !important;
+}
+
+body.brand-logo-visible .page-wrapper {
+    filter: blur(20px) !important;
+    -webkit-filter: blur(20px) !important;
+    pointer-events: none;
+    overflow: hidden !important;
+    will-change: filter;
+}
+
+body.brand-logo-visible .header-bar {
+    filter: blur(20px) !important;
+    -webkit-filter: blur(20px) !important;
+    pointer-events: none;
+    will-change: filter;
+}
+
+body.brand-logo-visible .thumbnail-filmstrip {
+    filter: blur(20px) !important;
+    -webkit-filter: blur(20px) !important;
+    pointer-events: none;
+    will-change: filter;
+}
+
+body.brand-logo-visible .size-slider {
+    filter: blur(20px) !important;
+    -webkit-filter: blur(20px) !important;
+    pointer-events: none;
+    will-change: filter;
+}
+
+body.brand-logo-visible .grid-section {
+    overflow: hidden !important;
+}
+
+/* Hide static logo when dismissed */
+.brand-svgs-static.dismissed {
+    display: none;
+}
+
+.brand-svg-wrapper {
+    display: flex;
+    align-items: center;
+    height: var(--button-size);
+}
+
+.brand-svg {
+    height: var(--button-size);
+    width: auto;
+    display: block;
+    object-fit: contain;
+    filter: brightness(0) invert(0);
+    transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    transform-origin: center center;
+    will-change: transform, opacity;
+    opacity: 1;
+}
+
+.brand-svgs:hover .brand-svg {
+    animation: flash 0.3s ease-in-out infinite;
+}
+
+body.dark-mode .brand-svg {
+    filter: brightness(0) invert(1);
+}
+
+/* Full Screen Info Overlay */
+.info-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    display: block;
+    padding: 1em;
+    padding-top: calc(var(--header-offset-top) + var(--button-size) + 1em);
+    box-sizing: border-box;
+    overflow-y: auto;
+    transform: translateY(100vh);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: hidden;
+    touch-action: pan-y; /* Allow vertical panning for content scroll, but we'll override in JS when needed */
+}
+
+.info-overlay.active {
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.info-overlay.swiping-up {
+    transform: translateY(-100vh);
+}
+
+body.info-overlay-open {
+    overflow: hidden !important;
+}
+
+html.info-overlay-open {
+    overflow: hidden !important;
+}
+
+body.info-overlay-open .page-wrapper {
+    overflow: hidden !important;
+}
+
+body.info-overlay-open .grid-section {
+    overflow: hidden !important;
+}
+
+body.dark-mode .info-overlay {
+    background: rgba(30, 30, 30, 0.7);
+}
+
+.info-overlay__content {
+    width: 25vw;
+    max-width: 25vw;
+    padding: 0;
+    margin: 0;
+}
+
+.info-overlay__section {
+    margin-bottom: 0;
+}
+
+.info-overlay__section:first-child {
+    margin-top: 2em;
+}
+
+.info-overlay__section:not(:first-child) {
+    margin-top: 3em;
+}
+
+.info-overlay__section:last-child {
+    margin-bottom: 0;
+}
+
+.info-overlay__section h2 {
+    font-size: 11px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    margin-top: 0;
+    color: #666;
+}
+
+body.dark-mode .info-overlay__section h2 {
+    color: #999;
+}
+
+/* Info Section - slides over grid with full scroll control */
+
+.info-overlay__section p {
+    font-size: 11px;
+    font-weight: 400;
+    margin: 0;
+    line-height: normal;
+    color: #000;
+}
+
+body.dark-mode .info-overlay__section p {
+    color: #fff;
+}
+
+.info-overlay__section a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    transition: opacity 0.2s ease;
+}
+
+.info-overlay__section a:hover {
+    animation: flash 0.3s ease-in-out infinite;
+}
+
+.info-overlay__section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-overlay__section li {
+    font-size: 11px;
+    font-weight: 400;
+    margin: 0;
+    line-height: normal;
+    color: #000;
+}
+
+body.dark-mode .info-overlay__section li {
+    color: #fff;
+}
+
+/* Info Button */
+.btn--info,
+#infoBtn {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+
+.search-bar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: var(--button-size);
+    padding-left: calc((var(--button-size) - var(--button-icon-size)) / 2);
+    padding-right: calc((var(--button-size) - var(--button-icon-size)) / 2);
+    gap: calc((var(--button-size) - var(--button-icon-size)) / 2);
+    width: var(--search-bar-width-desktop);
+    border-radius: var(--ui-border-radius);
+    background: var(--ui-background);
+    backdrop-filter: var(--ui-blur);
+    border: var(--ui-border);
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+.search-bar__icon,
+.search-bar__input-container,
+.search-bar__close {
+    flex-shrink: 0;
+}
+
+.search-bar__icon {
+    width: var(--button-icon-size);
+    height: var(--button-icon-size);
+    filter: brightness(0) invert(1);
+    pointer-events: none;
+}
+
+
+/* Color icon - PNG image clipped by SVG mask */
+.search-bar__color-icon {
+    width: var(--button-icon-size);
+    height: var(--button-icon-size);
+    filter: none;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+    object-fit: contain;
+    /* SVG as mask to clip the PNG image */
+    -webkit-mask-image: url('SVG/Colour2.svg');
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-image: url('SVG/Colour2.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+.search-bar__input-container {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 1.2em;
+}
+
+.search-bar__input-wrapper-autocomplete {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar__autocomplete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: var(--ui-text-color);
+    font-size: var(--search-text-size);
+    font-weight: var(--search-text-weight);
+    font-family: inherit;
+    opacity: 0.4;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    white-space: pre;
+    overflow: hidden;
+}
+
+.search-bar__input-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.search-bar__prefix {
+    color: var(--ui-text-color);
+    font-size: var(--search-text-size);
+    font-weight: var(--search-text-weight);
+    font-family: inherit;
+    margin-right: 0.25em; /* Natural letter spacing */
+    white-space: nowrap;
+}
+
+.search-bar__prefix.hidden {
+    display: none;
+}
+
+.search-bar__animated-text {
+    color: var(--ui-text-color);
+    font-size: var(--search-text-size);
+    font-weight: var(--search-text-weight);
+    font-family: inherit;
+    opacity: 0.7;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    height: 1.2em;
+    line-height: 1.2em;
+    vertical-align: top;
+}
+
+.search-bar__animated-text span {
+    display: block;
+    animation: scrollUp 0.3s ease-out;
+}
+
+@keyframes scrollUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+}
+
+/* Animation for old text scrolling out */
+.search-bar__animated-text span.scrolling-out {
+    animation: scrollOut 0.3s ease-out;
+}
+
+@keyframes flash {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes scrollOut {
+    0% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
+
+.search-bar__input {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ui-text-color);
+    font-size: var(--search-text-size);
+    font-weight: var(--search-text-weight);
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    cursor: text;
+    z-index: 2;
+}
+
+/* When input is focused or has value, hide the animated text wrapper */
+.search-bar__input:focus ~ .search-bar__input-wrapper,
+.search-bar__input:not(:placeholder-shown) ~ .search-bar__input-wrapper {
+    display: none;
+}
+
+.search-bar__input-wrapper.hidden {
+    display: none;
+}
+
+/* Ensure input text aligns with animated text */
+.search-bar__input::placeholder {
+    color: transparent; /* Hide placeholder since we use animated text */
+}
+
+.search-bar__close {
+    width: var(--button-icon-size);
+    height: var(--button-icon-size);
+    margin-left: auto;
+    margin-right: 0;
+    opacity: 0.2;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+    filter: brightness(0) invert(1);
+}
+
+/* Only show hover effect when button is active (visible) */
+.search-bar__close.visible:hover {
+    opacity: 1;
+}
+
+.search-bar__close.visible {
+    opacity: 1;
+}
+
+/* Search Dropdowns */
+/* .header-bar__search is already position: relative above */
+
+/* Dropdowns removed - back to original search bar */
+
+/* Disabled zoom buttons (on info page) */
+.btn.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+.btn.disabled .btn__icon {
+    opacity: 0.2;
+}
+
+.btn.disabled:hover .btn__icon {
+    opacity: 0.2;
+}
+
+/* Left Action Buttons Group */
+.header-bar__left-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--header-gap);
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.header-bar__left-actions.header-bar--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Action Buttons Group */
+.header-bar__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--header-gap);
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.header-bar__actions.header-bar--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Button Component */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--button-size);
+    height: var(--button-size);
+    border-radius: var(--ui-border-radius);
+    background: var(--ui-background);
+    backdrop-filter: var(--ui-blur);
+    border: var(--ui-border);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+    overflow: visible;
+    padding: 0;
+    z-index: 1;
+}
+
+
+/* Alternate Style Mode - activated with "-" key */
+body.alt-style .btn {
+    background: #ffffff;
+    border: 0.5px solid #000000;
+    backdrop-filter: none;
+}
+
+body.dark-mode.alt-style .btn {
+    background: #000000;
+    border: 0.5px solid #ffffff;
+}
+
+body.alt-style .btn__icon {
+    filter: brightness(0) invert(0);
+}
+
+body.dark-mode.alt-style .btn__icon {
+    filter: brightness(0) invert(1);
+}
+
+body.alt-style .btn--brand .btn__brand-content svg,
+body.alt-style .btn--brand .btn__brand-content img {
+    filter: brightness(0) invert(0);
+}
+
+body.dark-mode.alt-style .btn--brand .btn__brand-content svg,
+body.dark-mode.alt-style .btn--brand .btn__brand-content img {
+    filter: brightness(0) invert(1);
+}
+
+/* Alternate Style for Search Bar */
+body.alt-style .search-bar {
+    background: #ffffff;
+    border: 0.5px solid #000000;
+    backdrop-filter: none;
+}
+
+body.dark-mode.alt-style .search-bar {
+    background: #000000;
+    border: 0.5px solid #ffffff;
+}
+
+body.alt-style .search-bar__icon,
+body.alt-style .search-bar__close {
+    filter: brightness(0) invert(0);
+}
+
+body.dark-mode.alt-style .search-bar__icon,
+body.dark-mode.alt-style .search-bar__close {
+    filter: brightness(0) invert(1);
+}
+
+body.alt-style .search-bar__prefix,
+body.alt-style .search-bar__animated-text {
+    color: #000000;
+}
+
+body.dark-mode.alt-style .search-bar__prefix,
+body.dark-mode.alt-style .search-bar__animated-text {
+    color: #ffffff;
+}
+
+body.alt-style .search-bar__input {
+    color: #000000;
+}
+
+body.dark-mode.alt-style .search-bar__input {
+    color: #ffffff;
+}
+
+/* Dark mode for search dropdown icons */
+body.dark-mode .search-bar__filter-icon {
+    filter: brightness(0) invert(1);
+}
+
+/* Color icon keeps its PNG fill with mask in dark mode */
+body.dark-mode .search-bar__color-icon {
+    filter: none; /* Keep the PNG visible in dark mode */
+    /* Mask still applies, PNG shows through */
+}
+
+/* Dark mode adjustments for dropdowns (already using CSS variables, but ensure text color) */
+body.dark-mode .search-dropdown {
+    background: var(--ui-background);
+    color: var(--ui-text-color);
+}
+
+body.dark-mode .filter-tag {
+    color: var(--ui-text-color);
+}
+
+body.dark-mode .suggestion-item {
+    color: var(--ui-text-color);
+}
+
+body.dark-mode .filter-count {
+    color: var(--ui-text-color);
+    opacity: 0.6;
+}
+
+.btn__icon {
+    width: calc(var(--button-icon-size) * 0.92);
+    height: calc(var(--button-icon-size) * 0.92);
+    filter: brightness(0) invert(1);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    object-fit: contain;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Dark Mode Toggle Button */
+.btn--dark-mode .btn__icon {
+    position: absolute;
+    width: calc(var(--button-icon-size) * 0.92);
+    height: calc(var(--button-icon-size) * 0.92);
+}
+
+.btn--dark-mode .btn__icon--sun {
+    opacity: 1; /* Show sun icon in light mode */
+}
+
+body.dark-mode .btn--dark-mode .btn__icon--sun {
+    opacity: 0; /* Hide sun icon in dark mode */
+}
+
+body.dark-mode .btn--dark-mode .btn__icon--circle {
+    opacity: 1; /* Show circle icon in dark mode */
+}
+
+body:not(.dark-mode) .btn--dark-mode .btn__icon--circle {
+    opacity: 0; /* Hide circle icon in light mode */
+}
+
+/* Lightbox Mode - show arrows instead of zoom */
+.header-bar--lightbox-mode .btn__icon--zoom-out {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.header-bar--lightbox-mode .btn__icon--prev {
+    opacity: 1;
+    position: relative;
+}
+
+.header-bar:not(.header-bar--lightbox-mode) .btn__icon--prev {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.header-bar--lightbox-mode .btn__icon--zoom-in {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.header-bar--lightbox-mode .btn__icon--next {
+    opacity: 1;
+    position: relative;
+}
+
+.header-bar:not(.header-bar--lightbox-mode) .btn__icon--next {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+
+/* Thumbnail Filmstrip at bottom */
+.thumbnail-filmstrip {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: transparent;
+    display: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Lower thumbnails z-index when info overlay is active */
+body.info-overlay-open .thumbnail-filmstrip {
+    z-index: 100;
+}
+
+.thumbnail-filmstrip.active {
+    display: block;
+    opacity: 1;
+}
+
+.filmstrip-container {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 100%;
+    padding: 6px 12px;
+    align-items: center;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.filmstrip-container::-webkit-scrollbar {
+    height: 3px;
+}
+
+.filmstrip-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.filmstrip-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.filmstrip-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.filmstrip-thumb {
+    flex-shrink: 0;
+    width: 60px;
+    height: auto;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filmstrip-thumb:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.filmstrip-thumb.current {
+    border-color: rgba(128, 128, 128, 0.6);
+    transform: scale(1.15);
+    box-shadow: 0 0 0 1px rgba(128, 128, 128, 0.6), 0 2px 8px rgba(128, 128, 128, 0.3);
+    z-index: 10;
+    position: relative;
+}
+
+.filmstrip-thumb img,
+.filmstrip-thumb video {
+    width: 100%;
+    height: auto;
+    max-height: 48px;
+    object-fit: contain;
+    display: block;
+}
+
+
+.thumbnail {
+    width: 100%;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    display: block;
+    position: relative;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    font-size: 0;
+}
+
+.thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    z-index: 1;
+    display: block;
+    visibility: visible;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+
+.thumbnail img, .thumbnail video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    border-radius: 6px !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none; /* Don't block placeholders when invisible */
+}
+
+/* Ensure thumbnail container maintains aspect ratio and reserves space */
+.thumbnail {
+    min-height: 0;
+}
+
+.thumbnail img.loaded, .thumbnail video.loaded {
+    pointer-events: auto; /* Re-enable when loaded */
+}
+
+.thumbnail img.loaded, .thumbnail video.loaded {
+    opacity: 1;
+}
+
+.thumbnail video {
+    background: #000;
+}
+
+/* Size Slider */
+.size-slider {
+    position: fixed;
+    top: var(--site-padding);
+    right: var(--site-padding);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: var(--site-padding);
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 100000;
+    width: 180px;
+    display: none;
+}
+
+.size-slider.visible {
+    display: block;
+}
+
+.size-slider h3 {
+    margin: 0 0 0.5em 0;
+    font-size: 14px;
+}
+
+.slider {
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    background: #333;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    margin: 0.5em 0;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    border: none;
+}
+
+.size-info {
+    font-size: 10px;
+    color: #ccc;
+    margin-top: 0.5em;
+}
+
+
+.grid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 99999;
+    display: block;
+}
+
+.grid-overlay.hidden {
+    display: none;
+}
+
+.grid-column-counter {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ui-background);
+    backdrop-filter: var(--ui-blur);
+    border: var(--ui-border);
+    border-radius: var(--ui-border-radius);
+    padding: 8px 16px;
+    color: var(--ui-text-color);
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 100000;
+    pointer-events: none;
+    user-select: none;
+}
+
+.column-guide {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    background: rgba(255, 0, 0, 0.1);
+    border-left: 1px solid rgba(255, 0, 0, 0.3);
+    border-right: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.item[data-type="video"]:hover .play-icon {
+    opacity: 1;
+}
+
+.play-icon::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 8px solid #fff;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    margin-left: 2px;
+}
+
+/* Lightbox */
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 500;
+    transform: translateY(100vh);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+/* Dark mode lightbox background */
+body.dark-mode .lightbox {
+    background: rgba(30, 30, 30, 0.7);
+}
+
+.lightbox.active {
+    display: flex;
+    /* Don't set transform here - let .slide-in handle the animation */
+}
+
+.lightbox.sliding-up {
+    transform: translateY(-100vh);
+    opacity: 0;
+}
+
+/* Disable scroll on body and page when lightbox is active */
+body.lightbox-open {
+    overflow: hidden !important;
+}
+
+.lightbox.active ~ .page-wrapper,
+body.lightbox-open .page-wrapper {
+    overflow: hidden;
+    /* Don't set height: 100vh - it crops the grid content behind the blur */
+}
+
+.lightbox.active.slide-in {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.lightbox img, .lightbox video {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.lightbox.media-visible img,
+.lightbox.media-visible video {
+    opacity: 1;
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: calc((8 * ((100vw - 2em - 44px) / 12)) + 28px); /* 8 columns width */
+    max-height: 90vh;
+    display: inline-block;
+}
+
+.lightbox-content:hover .video-player-ui.active {
+    opacity: 1;
+}
+
+.video-player-ui:not(.active) {
+    display: none !important;
+}
+
+/* NEVER show video player over images */
+.lightbox:not([data-has-video]) .video-player-ui {
+    display: none !important;
+}
+
+/* NEVER show video player for special items */
+.special-item-content ~ .video-player-ui,
+.lightbox:has(.special-item-content) .video-player-ui {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Lightbox image wrapper */
+.lightbox-image-wrapper {
+    position: relative;
+    display: inline-block;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+}
+
+.lightbox img {
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 0;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    transform-origin: center center;
+    z-index: 1;
+}
+
+.lightbox video {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 6px !important;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    transform-origin: center center;
+    z-index: 1;
+}
+
+.lightbox-media {
+    transform-origin: center center;
+    position: relative;
+}
+
+.lightbox-placeholder {
+    position: relative;
+    background-color: #f5f5f5;
+    z-index: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.lightbox-placeholder.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lightbox-media {
+    position: relative;
+}
+
+.lightbox-media img,
+.lightbox-media video {
+    position: static !important;
+    z-index: 1;
+    display: block;
+    border-radius: 6px;
+}
+
+.lightbox-close {
+    display: none;
+}
+
+.lightbox-nav {
+    display: none;
+}
+
+.lightbox-prev {
+    display: none;
+}
+
+.lightbox-next {
+    display: none;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+/* Responsive Breakpoints */
+/* Contact box visibility - Desktop/Tablet: hide in box-2, show in box-4 */
+.contact-box--desktop {
+    display: none;
+}
+
+.contact-box--mobile {
+    display: block;
+}
+
+/* Ensure contact box content is visible when the box itself is shown */
+.contact-box--mobile,
+.contact-box--desktop {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Intermediate breakpoint - between desktop and tablet */
+@media (max-width: 1400px) and (min-width: 1025px) {
+    .info-section {
+        width: 75%;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .search-bar {
+        width: var(--search-bar-width-tablet);
+    }
+    
+    .info-section {
+        width: 100%;
+    }
+    
+    /* Show tablet version of about text, hide desktop */
+    .info-section .about-text-desktop {
+        display: none;
+    }
+    
+    .info-section .about-text-tablet {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --grid-columns: 5;
+    }
+    
+    .header-bar {
+        transition: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--header-gap);
+        margin-right: calc(-1 * var(--header-gap)); /* Remove gap on right edge */
+    }
+    
+    .search-bar {
+        width: 100%;
+        max-width: 100%;
+        transition: none;
+        flex-shrink: 1;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    
+    .header-bar__search {
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .header-bar__left-actions {
+        flex-shrink: 0;
+    }
+    
+    .header-bar__actions {
+        flex-shrink: 0;
+    }
+    
+    .btn {
+        transition: none;
+    }
+    
+    /* Mobile: brand SVGs should be in normal flow but visible above modal */
+    .brand-svgs {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+        z-index: 10001 !important; /* Above info overlay (9999) */
+    }
+    
+    /* Mobile: ensure header-bar__left-actions is visible above modal */
+    .header-bar__left-actions {
+        position: relative;
+        z-index: 10001 !important; /* Above info overlay (9999) */
+    }
+    
+    /* Mobile: search bar stays in normal header position */
+    .header-bar__search {
+        position: static;
+        left: auto;
+        top: auto;
+        transform: none;
+        z-index: auto;
+    }
+    
+    /* Mobile: info overlay content should span full width with same padding as desktop */
+    .info-overlay__content {
+        width: calc(100vw - 2em) !important;
+        max-width: calc(100vw - 2em) !important;
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* Mobile: lightbox images/videos should span full width with 1em padding on both sides */
+    .lightbox {
+        padding: 0 1em !important;
+        box-sizing: border-box !important;
+    }
+    
+    .lightbox-content {
+        max-width: calc(100vw - 2em) !important;
+        width: calc(100vw - 2em) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .lightbox-image-wrapper,
+    .video-player-wrapper {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .lightbox img,
+    .lightbox video {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .header-bar {
+        justify-content: space-between;
+    }
+    
+    /* Hide dark mode, zoom, and prev/next buttons on mobile */
+    #darkModeToggle,
+    #zoomOutBtn,
+    #zoomInBtn {
+        display: none !important;
+    }
+
+    /* Mobile slider: 3-6 columns */
+    #sizeSlider {
+        min: 3;
+        max: 6;
+    }
+
+    /* Keep using the proper grid system on mobile - don't override with auto-fit */
+    .grid-wrapper {
+        /* Wrapper for the grid on mobile */
+        width: 100%;
+        padding: 0;
+        padding-top: 10em;
+        padding-bottom: 6em;
+        margin: 0;
+    }
+
+    .grid-section {
+        /* Use the CSS variable grid system - already set to 3 columns via :root */
+        grid-template-columns: repeat(var(--grid-columns), var(--column-width));
+        gap: var(--grid-gap);
+        /* Grid section fills full width of wrapper */
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Mobile info section layout */
+    .info-wrapper {
+        padding: 0;
+        margin: 0;
+    }
+
+    .info-wrapper {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    
+    .info-section {
+        width: 100%;
+        height: auto !important;
+        max-height: none !important;
+        padding: 0;
+        margin: 0;
+        overflow: visible !important;
+    }
+
+    .info-section .info-section {
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* Mobile: All boxes span 100% width */
+    .box-1,
+    .box-2,
+    .box-3,
+    .box-4 {
+        width: 100% !important;
+    }
+    
+    /* Mobile: Hide contact box in box-2, show in box-4 */
+    .box-2 .contact-box--desktop {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    .box-4 .contact-box--mobile {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Ensure all content in box-4 is visible on mobile */
+    .box-4 .awards-box,
+    .box-4 .work-featured-box,
+    .box-4 .contact-box {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Hide footer brand on mobile */
+    .info-section-footer-brand {
+        display: none !important;
+    }
+    
+    /* Hide desktop and tablet about text versions on mobile, show tablet version */
+    .info-section .about-text-desktop {
+        display: none !important;
+    }
+    
+    .info-section .about-text-tablet {
+        display: block !important;
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    
+    .page-wrapper {
+        padding: var(--site-padding);
+    }
+    
+    .lightbox-nav {
+        display: none;
+    }
+}
+
+/* Minimalist Video Player UI - Corner Controls */
+.video-player-ui {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    background: transparent;
+    pointer-events: none;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Position video player UI relative to the actual video element */
+.lightbox-media:has(video) .video-player-ui {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* Position video player UI relative to video wrapper for proper button alignment */
+.video-player-wrapper .video-player-ui {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.video-player-ui.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Corner Control Buttons */
+.corner-control {
+    position: absolute;
+    bottom: 20px;
+    width: 44px;
+    height: 44px;
+    background: var(--ui-background);
+    border: var(--ui-border);
+    border-radius: 50%;
+    backdrop-filter: var(--ui-blur);
+    -webkit-backdrop-filter: var(--ui-blur);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.corner-control:hover {
+    background: var(--ui-background-hover);
+    transform: scale(1.02);
+    animation: flash 0.3s ease-in-out infinite;
+}
+
+.corner-control:active {
+    transform: scale(0.98);
+    background: var(--ui-background-active);
+}
+
+/* Play/Pause Button - Bottom Left */
+.play-pause-corner {
+    left: 20px;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+/* Mute Button - Bottom Right */
+.mute-corner {
+    right: 20px;
+    color: #ffffff;
+}
+
+.mute-icon {
+    font-size: 20px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+
+/* Video wrapper - matches video's exact rendered dimensions */
+/* REBUILT: Clean video wrapper - simple relative container */
+.video-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    font-size: 0;
+}
+
+/* Video element - block level, no extra spacing */
+.lightbox-media video {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    border-radius: 6px;
+}
+
+/* Professional video player wrapper - position relative container */
+.video-player-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Progress bar - absolutely positioned within wrapper, always at bottom */
+.video-player-wrapper .video-progress-bar {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 6px !important;
+    background: rgba(128, 128, 128, 0.3) !important;
+    z-index: 1000 !important;
+    display: block !important;
+    cursor: pointer;
+    pointer-events: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.video-player-wrapper .video-progress-bar.hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* Keep old selector for compatibility */
+.lightbox-media .video-progress-bar {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 6px !important;
+    background: rgba(128, 128, 128, 0.3) !important;
+    z-index: 1000 !important;
+    display: block !important;
+    cursor: pointer;
+    pointer-events: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.lightbox-media .video-progress-bar.hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* Keep old selector for compatibility */
+.video-wrapper .progress-line {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 0.5em !important;
+    background: rgba(128, 128, 128, 0.3) !important;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 10 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.video-wrapper .progress-line.hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* Progress bar fill */
+.lightbox-media .progress-fill-line {
+    height: 100%;
+    background: rgba(200, 200, 200, 0.8);
+    transition: width 0.1s ease;
+    pointer-events: none;
+}
+
+.progress-fill-line {
+    height: 100%;
+    background: rgba(200, 200, 200, 0.8);
+    transition: width 0.1s ease;
+    pointer-events: none;
+}
+
+/* Hide the old horizontal controls */
+.video-controls {
+    display: none;
+}
+
+/* Hide debug strokes when toggled - DISABLED */
+/* body.hide-debug-strokes [data-debug-stroke] {
+    border: none !important;
+} */
+
+

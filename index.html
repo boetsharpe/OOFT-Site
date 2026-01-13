@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Preload OOFT brand SVGs to prevent janky loading -->
+    <link rel="preload" href="SVG/ooft/1.svg" as="image">
+    <link rel="preload" href="SVG/ooft/2.svg" as="image">
+    <link rel="preload" href="SVG/ooft/3.svg" as="image">
+    <link rel="preload" href="SVG/ooft/4.svg" as="image">
     <script>
         // Apply cover and hide website immediately on page load
         (function() {
@@ -13,8 +18,50 @@
                             (performance.navigation && performance.navigation.type === 1);
             
             const hasHash = window.location.hash && window.location.hash.length > 1;
+            
+            // Function to wait for all brand SVGs to load before showing cover
+            function waitForBrandSvgs(callback) {
+                const svgPaths = ['SVG/ooft/1.svg', 'SVG/ooft/2.svg', 'SVG/ooft/3.svg', 'SVG/ooft/4.svg'];
+                let loadedCount = 0;
+                const totalSvgs = svgPaths.length;
+                let callbackFired = false;
+                
+                const fireCallback = () => {
+                    if (!callbackFired) {
+                        callbackFired = true;
+                        callback();
+                    }
+                };
+                
+                svgPaths.forEach(path => {
+                    const img = new Image();
+                    img.onload = img.onerror = () => {
+                        loadedCount++;
+                        if (loadedCount === totalSvgs) {
+                            fireCallback();
+                        }
+                    };
+                    // Check if already cached
+                    if (img.complete) {
+                        loadedCount++;
+                        if (loadedCount === totalSvgs) {
+                            fireCallback();
+                        }
+                    } else {
+                        img.src = path;
+                    }
+                });
+                
+                // Fallback timeout in case SVGs fail to load (shorter for reloads)
+                const timeout = isReload ? 500 : 2000;
+                setTimeout(() => {
+                    if (loadedCount < totalSvgs && !callbackFired) {
+                        fireCallback();
+                    }
+                }, timeout);
+            }
+            
             if (!hasHash) {
-                document.documentElement.classList.add('brand-logo-visible');
                 // Disable scrolling when cover is visible
                 document.documentElement.style.overflow = 'hidden';
                 
@@ -31,25 +78,40 @@
                 window.addEventListener('wheel', preventScrollEarly, { passive: false, capture: true });
                 window.addEventListener('touchmove', preventScrollEarly, { passive: false, capture: true });
                 
-                // Apply to body as soon as it exists
-                if (document.body) {
-                    document.body.classList.add('brand-logo-visible');
-                    document.body.style.overflow = 'hidden';
-                    // On reload, show website instantly; on first load, wait 1 second
-                    if (isReload) {
-                        document.body.classList.add('website-loaded');
-                        document.body.setAttribute('data-is-reload', 'true');
+                // Wait for SVGs to load before showing cover
+                waitForBrandSvgs(() => {
+                    // Mark SVGs as loaded so they become visible
+                    const brandSvgsStatic = document.getElementById('brandSvgsStatic');
+                    if (brandSvgsStatic) {
+                        brandSvgsStatic.classList.add('svgs-loaded');
                     }
-                } else {
-                    document.addEventListener('DOMContentLoaded', function() {
+                    
+                    document.documentElement.classList.add('brand-logo-visible');
+                    
+                    // Apply to body as soon as it exists
+                    if (document.body) {
                         document.body.classList.add('brand-logo-visible');
                         document.body.style.overflow = 'hidden';
+                        // On reload, show website instantly; on first load, wait 1 second
                         if (isReload) {
                             document.body.classList.add('website-loaded');
                             document.body.setAttribute('data-is-reload', 'true');
                         }
-                    });
-                }
+                    } else {
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const brandSvgsStatic = document.getElementById('brandSvgsStatic');
+                            if (brandSvgsStatic) {
+                                brandSvgsStatic.classList.add('svgs-loaded');
+                            }
+                            document.body.classList.add('brand-logo-visible');
+                            document.body.style.overflow = 'hidden';
+                            if (isReload) {
+                                document.body.classList.add('website-loaded');
+                                document.body.setAttribute('data-is-reload', 'true');
+                            }
+                        });
+                    }
+                });
             } else {
                 // If hash exists, show website immediately
                 if (document.body) {

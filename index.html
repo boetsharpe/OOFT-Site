@@ -742,17 +742,21 @@
                 
                 // Check if this thumbnail was already loaded (not initial load)
                 const wasLoaded = !isInitialLoad && item.path && loadedThumbnails.has(item.path);
-                const srcAttr = wasLoaded ? `src="${thumbUrl}"` : `data-src="${thumbUrl}"`;
+                // Always use data-src for lazy loading on initial load, even if wasLoaded
+                const srcAttr = wasLoaded && !isInitialLoad ? `src="${thumbUrl}"` : `data-src="${thumbUrl}"`;
                 const loadedClass = wasLoaded ? ' loaded' : '';
                 const loadedStyle = wasLoaded ? ' style="opacity: 1;"' : '';
+                // Add width/height for better layout stability and performance
+                const widthAttr = item.width ? `width="${item.width}"` : '';
+                const heightAttr = item.height ? `height="${item.height}"` : '';
                 
                 return `
                 <div class="item" data-type="${item.type}" data-folder="${item.folder}" data-tags="${(item.tags || []).join(',')}" onclick="openLightbox(${index})">
                     <div class="thumbnail" style="aspect-ratio: ${aspectRatio};">
                         <div class="thumbnail-placeholder" style="background-color: ${item.dominantColor || '#f5f5f5'};${wasLoaded ? ' display: none;' : ''}"></div>
                         ${thumbUrl ? (item.type === 'video' && !thumbUrl.toLowerCase().endsWith('.jpg') && !thumbUrl.toLowerCase().endsWith('.jpeg') && !thumbUrl.toLowerCase().endsWith('.png') && !thumbUrl.toLowerCase().endsWith('.gif') && !thumbUrl.toLowerCase().endsWith('.webp')
-                            ? `<video ${srcAttr} muted loop playsinline autoplay class="${loadedClass}"${loadedStyle} onerror="console.log('Video thumbnail failed:', '${thumbUrl}')" onloadeddata="this.classList.add('loaded'); this.style.opacity = '1'; this.play();"></video>`
-                            : `<img ${srcAttr} alt="${item.filename}" class="${loadedClass}"${loadedStyle} onload="this.classList.add('loaded'); this.style.opacity = '1';" onerror="console.log('Thumbnail failed:', '${thumbUrl}')">`
+                            ? `<video ${srcAttr} ${widthAttr} ${heightAttr} muted loop playsinline class="${loadedClass}"${loadedStyle} onerror="console.log('Video thumbnail failed:', '${thumbUrl}')" onloadeddata="this.classList.add('loaded'); this.style.opacity = '1'; if (!this.dataset.src) { this.play(); }"></video>`
+                            : `<img ${srcAttr} ${widthAttr} ${heightAttr} loading="lazy"${index < 12 ? ' fetchpriority="high"' : ''} alt="${item.filename}" class="${loadedClass}"${loadedStyle} onload="this.classList.add('loaded'); this.style.opacity = '1';" onerror="console.log('Thumbnail failed:', '${thumbUrl}')">`
                         ) : ''}
                         ${item.type === 'video' ? '<div class="play-icon"></div>' : ''}
                     </div>
@@ -762,8 +766,15 @@
                 `;
             }).join('');
             
-            // Don't setup lazy loading here - it will be enabled after search transition
-            // setupLazyLoading();
+            // Enable lazy loading immediately after render for better mobile performance
+            if (isInitialLoad) {
+                // Small delay to ensure DOM is ready
+                setTimeout(() => {
+                    setupLazyLoading();
+                }, 100);
+            } else {
+                setupLazyLoading();
+            }
             
             // Add hover effects
             setupHoverEffects();
@@ -773,9 +784,11 @@
         let lazyLoadingObserver = null;
 
         function setupLazyLoading() {
+            // Increase rootMargin on mobile for better performance (load earlier)
+            const isMobile = window.innerWidth <= 768;
             const observerOptions = {
                 root: null,
-                rootMargin: '200px', // Load earlier for smoother experience
+                rootMargin: isMobile ? '400px' : '200px', // Load much earlier on mobile
                 threshold: 0.01
             };
 
@@ -826,9 +839,15 @@
                             video.style.opacity = '0';
                             video.src = video.dataset.src;
                             video.autoplay = true;
+                            video.playsInline = true;
                             video.onloadeddata = () => {
                                 video.classList.add('loaded');
                                 video.style.opacity = '1';
+                                // Play video once loaded
+                                video.play().catch(e => {
+                                    // Autoplay may be blocked, that's okay
+                                    console.log('Video autoplay blocked:', e);
+                                });
                                 // Hide placeholder once video loads
                                 if (placeholder) {
                                     placeholder.style.display = 'none';

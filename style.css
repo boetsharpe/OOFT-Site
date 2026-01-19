@@ -530,13 +530,26 @@ body {
 
 /* Hide SVGs until all are loaded to prevent janky partial loading */
 .brand-svgs-static:not(.svgs-loaded) .brand-svg-static {
-    opacity: 0;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 /* Show cover logo immediately when brand-logo-visible is active and SVGs are loaded */
 body.brand-logo-visible .brand-svgs-static:not(.dismissed).svgs-loaded {
     opacity: 1;
     visibility: visible;
+}
+
+/* Show SVGs when loaded - override inline style and hide rule */
+.brand-svgs-static.svgs-loaded .brand-svg-static {
+    display: block !important;
+    width: auto !important;
+    height: 80vh !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .brand-svg-wrapper-static {

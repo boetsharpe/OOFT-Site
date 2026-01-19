@@ -3,6 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>OOFT</title>
+    <meta name="title" content="OOFT">
+    <meta name="description" content="Moving things around until they look right">
+    <meta name="keywords" content="OOFT, OOFT studio, design, creative, motion graphics, animation, visual design">
+    <meta name="author" content="OOFT">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <link rel="canonical" href="https://www.ooft.studio/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="apple-touch-icon" href="../favicon.png">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.ooft.studio/">
+    <meta property="og:title" content="OOFT">
+    <meta property="og:description" content="Moving things around until they look right">
+    <meta property="og:image" content="https://www.ooft.studio/favicon.png">
+    <meta property="og:site_name" content="OOFT">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.ooft.studio/">
+    <meta property="twitter:title" content="OOFT">
+    <meta property="twitter:description" content="Moving things around until they look right">
+    <meta property="twitter:image" content="https://www.ooft.studio/favicon.png">
+    <meta property="twitter:creator" content="@ooft.studio">
+    
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Preload OOFT brand SVGs to prevent janky loading -->
@@ -80,10 +111,65 @@
                 
                 // Wait for SVGs to load before showing cover
                 waitForBrandSvgs(() => {
-                    // Mark SVGs as loaded so they become visible
-                    const brandSvgsStatic = document.getElementById('brandSvgsStatic');
-                    if (brandSvgsStatic) {
-                        brandSvgsStatic.classList.add('svgs-loaded');
+                    // Wait for DOM to be ready and ensure CSS has applied
+                    const showSvgs = () => {
+                        const brandSvgsStatic = document.getElementById('brandSvgsStatic');
+                        if (brandSvgsStatic) {
+                            const svgImages = brandSvgsStatic.querySelectorAll('.brand-svg-static');
+                            // Ensure all images are loaded
+                            let imagesReady = 0;
+                            const totalImages = svgImages.length;
+                            
+                            if (totalImages === 0) {
+                                // If images aren't in DOM yet, wait a bit
+                                setTimeout(showSvgs, 10);
+                                return;
+                            }
+                            
+                            svgImages.forEach(img => {
+                                if (img.complete && img.naturalWidth > 0) {
+                                    imagesReady++;
+                                } else {
+                                    img.onload = () => {
+                                        imagesReady++;
+                                        if (imagesReady === totalImages) {
+                                            finalizeSvgs();
+                                        }
+                                    };
+                                    img.onerror = () => {
+                                        imagesReady++;
+                                        if (imagesReady === totalImages) {
+                                            finalizeSvgs();
+                                        }
+                                    };
+                                }
+                            });
+                            
+                            if (imagesReady === totalImages) {
+                                finalizeSvgs();
+                            }
+                            
+                            function finalizeSvgs() {
+                                // Use requestAnimationFrame to ensure CSS has applied
+                                requestAnimationFrame(() => {
+                                    brandSvgsStatic.classList.add('svgs-loaded');
+                                    // Remove all inline hiding styles
+                                    svgImages.forEach(img => {
+                                        img.style.display = '';
+                                        img.style.width = '';
+                                        img.style.height = '';
+                                        img.style.opacity = '';
+                                        img.style.visibility = '';
+                                    });
+                                });
+                            }
+                        }
+                    };
+                    
+                    if (document.body) {
+                        showSvgs();
+                    } else {
+                        document.addEventListener('DOMContentLoaded', showSvgs);
                     }
                     
                     document.documentElement.classList.add('brand-logo-visible');
@@ -101,7 +187,46 @@
                         document.addEventListener('DOMContentLoaded', function() {
                             const brandSvgsStatic = document.getElementById('brandSvgsStatic');
                             if (brandSvgsStatic) {
-                                brandSvgsStatic.classList.add('svgs-loaded');
+                                const svgImages = brandSvgsStatic.querySelectorAll('.brand-svg-static');
+                                let imagesReady = 0;
+                                const totalImages = svgImages.length;
+                                
+                                if (totalImages > 0) {
+                                    svgImages.forEach(img => {
+                                        if (img.complete && img.naturalWidth > 0) {
+                                            imagesReady++;
+                                        } else {
+                                            img.onload = img.onerror = () => {
+                                                imagesReady++;
+                                                if (imagesReady === totalImages) {
+                                                    requestAnimationFrame(() => {
+                                                        brandSvgsStatic.classList.add('svgs-loaded');
+                                                        svgImages.forEach(img => {
+                                                            img.style.display = '';
+                                                            img.style.width = '';
+                                                            img.style.height = '';
+                                                            img.style.opacity = '';
+                                                            img.style.visibility = '';
+                                                        });
+                                                    });
+                                                }
+                                            };
+                                        }
+                                    });
+                                    
+                                    if (imagesReady === totalImages) {
+                                        requestAnimationFrame(() => {
+                                            brandSvgsStatic.classList.add('svgs-loaded');
+                                            svgImages.forEach(img => {
+                                                img.style.display = '';
+                                                img.style.width = '';
+                                                img.style.height = '';
+                                                img.style.opacity = '';
+                                                img.style.visibility = '';
+                                            });
+                                        });
+                                    }
+                                }
                             }
                             document.body.classList.add('brand-logo-visible');
                             document.body.style.overflow = 'hidden';
@@ -131,16 +256,16 @@
     <!-- Static full-width brand SVG overlay -->
     <div class="brand-svgs-static" id="brandSvgsStatic">
         <div class="brand-svg-wrapper-static">
-            <img src="SVG/ooft/1.svg" alt="" class="brand-svg-static" />
+            <img src="SVG/ooft/1.svg" alt="" class="brand-svg-static" style="display: none; width: 0; height: 0; opacity: 0; visibility: hidden;" />
         </div>
         <div class="brand-svg-wrapper-static">
-            <img src="SVG/ooft/2.svg" alt="" class="brand-svg-static" />
+            <img src="SVG/ooft/2.svg" alt="" class="brand-svg-static" style="display: none; width: 0; height: 0; opacity: 0; visibility: hidden;" />
         </div>
         <div class="brand-svg-wrapper-static">
-            <img src="SVG/ooft/3.svg" alt="" class="brand-svg-static" />
+            <img src="SVG/ooft/3.svg" alt="" class="brand-svg-static" style="display: none; width: 0; height: 0; opacity: 0; visibility: hidden;" />
         </div>
         <div class="brand-svg-wrapper-static">
-            <img src="SVG/ooft/4.svg" alt="" class="brand-svg-static" />
+            <img src="SVG/ooft/4.svg" alt="" class="brand-svg-static" style="display: none; width: 0; height: 0; opacity: 0; visibility: hidden;" />
         </div>
     </div>
 
